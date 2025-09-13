@@ -115,6 +115,23 @@ void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
 	QString folderpath=folderPaths.at(index);
 	QDir directory(folderpath);
 	QStringList musicFiles=directory.entryList(QStringList()<<"*.mp3"<<"*.wav"<<"*.flac",QDir::Files);
+	for(const auto& file:musicFiles)
+	{
+		QString fullPath=folderpath+'/'+file;
+		tracksPaths.append(fullPath);
+	}
 	ui->tracksListWidget->clear();
 	ui->tracksListWidget->addItems(musicFiles);
+}
+void ZenPlayer::on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item)
+{
+	int index=ui->foldersListWidget->row(item);
+    closeFolderDialog d;
+    if(d.exec()==QDialog::Accepted)
+    {
+		folderPaths.removeAt(index);
+		ui->foldersListWidget->takeItem(index);
+		ui->tracksListWidget->clear();
+		tracksPaths.clear();
+    }
 }

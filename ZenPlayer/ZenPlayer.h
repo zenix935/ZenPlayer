@@ -3,6 +3,7 @@
 #include <QtWidgets/QApplication>
 #include <QFileDialog>
 #include "ui_ZenPlayer.h"
+#include "closeFolderDialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ZenPlayerClass; };
@@ -26,9 +27,11 @@ private slots:
     void on_playButton_clicked();
     void on_addFolderButton_clicked();
 	void on_foldersListWidget_itemClicked(QListWidgetItem* item);
+    void on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item);
 
 private:
     Ui::ZenPlayerClass *ui;
     bool mute,repeat,shuffle,pause;
     QList<QString> folderPaths;
+    QList<QString> tracksPaths;
 };
