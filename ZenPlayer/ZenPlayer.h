@@ -1,6 +1,7 @@
 #pragma once
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QApplication>
+#include <QFileDialog>
 #include "ui_ZenPlayer.h"
 
 QT_BEGIN_NAMESPACE
@@ -23,8 +24,11 @@ private slots:
     void on_previousButton_clicked();
     void on_nextButton_clicked();
     void on_playButton_clicked();
+    void on_addFolderButton_clicked();
+	void on_foldersListWidget_itemClicked(QListWidgetItem* item);
 
 private:
     Ui::ZenPlayerClass *ui;
     bool mute,repeat,shuffle,pause;
+    QList<QString> folderPaths;
 };

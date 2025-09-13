@@ -7,6 +7,7 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent),ui(new Ui::ZenPlayer
     shuffle=false;
     pause=true;
     ui->setupUi(this);
+	setWindowIcon(QIcon("pics/play.png"));
 }
 
 ZenPlayer::~ZenPlayer()
@@ -98,4 +99,22 @@ void ZenPlayer::on_playButton_clicked()
         ui->playButton->setToolTip("Pause");
         pause=false;
     }
+}
+
+//opening folders and making playlists
+void ZenPlayer::on_addFolderButton_clicked()
+{
+    QString folderpath=QFileDialog::getExistingDirectory(this,"Select a folder");
+    folderPaths.append(folderpath);
+	QString foldername=folderpath.section('/',-1);
+	ui->foldersListWidget->addItem(foldername);
+}
+void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
+{
+	int index=ui->foldersListWidget->row(item);
+	QString folderpath=folderPaths.at(index);
+	QDir directory(folderpath);
+	QStringList musicFiles=directory.entryList(QStringList()<<"*.mp3"<<"*.wav"<<"*.flac",QDir::Files);
+	ui->tracksListWidget->clear();
+	ui->tracksListWidget->addItems(musicFiles);
 }
