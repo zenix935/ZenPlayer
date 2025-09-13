@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/ZenPlayer"/>
+    <qresource prefix="/pics">
+        <file>pics/mute.png</file>
+        <file>pics/sound.png</file>
+        <file>pics/repeat-all.png</file>
+        <file>pics/repeat-one.png</file>
+        <file>pics/cycle.png</file>
+        <file>pics/shuffle.png</file>
+        <file>pics/next.png</file>
+        <file>pics/previous.png</file>
+        <file>pics/pause.png</file>
+        <file>pics/play.png</file>
+        <file>pics/add.png</file>
+    </qresource>
+</RCC>

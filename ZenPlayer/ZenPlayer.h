@@ -1,0 +1,30 @@
+#pragma once
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QApplication>
+#include "ui_ZenPlayer.h"
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class ZenPlayerClass; };
+QT_END_NAMESPACE
+
+class ZenPlayer : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    ZenPlayer(QWidget *parent = nullptr);
+    ~ZenPlayer();
+
+private slots:
+    void on_muteButton_clicked();
+	void on_volumeSlider_valueChanged(int value);
+    void on_repeatButton_clicked();
+    void on_shuffleButton_clicked();
+    void on_previousButton_clicked();
+    void on_nextButton_clicked();
+    void on_playButton_clicked();
+
+private:
+    Ui::ZenPlayerClass *ui;
+    bool mute,repeat,shuffle,pause;
+};
