@@ -1,5 +1,11 @@
 {
     "folders": [
         "C:/Users/nosoo/Music/test"
+    ],
+    "playlists": [
+        {
+            "name": "ppp",
+            "tracks": []
+        }
     ]
 }

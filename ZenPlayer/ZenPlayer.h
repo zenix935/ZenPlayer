@@ -6,6 +6,8 @@
 #include "json.hpp"
 #include "ui_ZenPlayer.h"
 #include "closeFolderDialog.h"
+#include "addToPlaylistDialog.h"
+#include "createPlaylistDialog.h"
 
 using json=nlohmann::json;
 
@@ -34,6 +36,7 @@ private slots:
     void saveData();
 	void loadData();
     void on_addFolderButton_clicked();
+    void on_addPlaylistButton_clicked();
 	void on_foldersListWidget_itemClicked(QListWidgetItem* item);
     void on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item);
     void on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item);
@@ -42,8 +45,8 @@ private slots:
 
 private:
     Ui::ZenPlayerClass *ui;
-    bool mute,repeat,shuffle,pause;
+    bool mute,repeat,shuffle,pause,isFolder;
 	json data;
     QList<QString> folderPaths;
-    QList<QString> tracksPaths;
+    QList<QString> trackPaths;
 };

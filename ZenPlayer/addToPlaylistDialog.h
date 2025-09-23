@@ -21,7 +21,10 @@ public:
 	{
 		delete ui;
 	}
-
+	void addPlaylists(QList<QString> playlists)
+	{
+		ui->playlistListWidget->addItems(playlists);
+	}
 private:
 	Ui::addToPlaylistDialog* ui;
 };

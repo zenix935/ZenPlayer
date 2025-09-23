@@ -48,12 +48,18 @@
     <QtUic Include="addToPlaylistDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="createPlaylistDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="closeFolderDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="addToPlaylistDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="createPlaylistDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

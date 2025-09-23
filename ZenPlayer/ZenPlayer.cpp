@@ -5,6 +5,7 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent),ui(new Ui::ZenPlayer
     mute=false;
     repeat=false;
     shuffle=false;
+    isFolder=true;
     pause=true;
     ui->setupUi(this);
 	setWindowIcon(QIcon("pics/play.png"));
@@ -132,6 +133,13 @@ void ZenPlayer::loadData()
 			QString foldername=folderpath.section('/',-1);
 			ui->foldersListWidget->addItem(foldername);
 		}
+        temp.clear();
+        for(const auto& playlist:data["playlists"])
+        {
+			temp.push_back(playlist["name"]);
+			QString playlistname=QString::fromStdString(playlist["name"]);
+			ui->playlistListWidget->addItem(playlistname);
+        }
 	}
 	else
 		qDebug()<<"There was a problem in loading data";
@@ -143,8 +151,22 @@ void ZenPlayer::on_addFolderButton_clicked()
 	QString foldername=folderpath.section('/',-1);
 	ui->foldersListWidget->addItem(foldername);
 }
+void ZenPlayer::on_addPlaylistButton_clicked()
+{
+    createPlaylistDialog d;
+    if(d.exec()==QDialog::Accepted)
+    {
+		if(!data.contains("playlists")||!data["playlists"].is_array())
+			data["playlists"]=json::array();
+        json newPlaylist;
+		newPlaylist["name"]=d.getPlaylistName().toStdString();
+		newPlaylist["tracks"]=json::array();
+		data["playlists"].push_back(newPlaylist);
+    }
+}
 void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
 {
+    isFolder=true;
 	int index=ui->foldersListWidget->row(item);
 	QString folderpath=folderPaths.at(index);
 	QDir directory(folderpath);
@@ -152,7 +174,7 @@ void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
 	for(const auto& file:musicFiles)
 	{
 		QString fullPath=folderpath+'/'+file;
-		tracksPaths.append(fullPath);
+		trackPaths.append(fullPath);
 	}
 	ui->tracksListWidget->clear();
 	ui->tracksListWidget->addItems(musicFiles);
@@ -166,19 +188,27 @@ void ZenPlayer::on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item)
 		folderPaths.removeAt(index);
 		ui->foldersListWidget->takeItem(index);
 		ui->tracksListWidget->clear();
-		tracksPaths.clear();
+		trackPaths.clear();
     }
 }
 void ZenPlayer::on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item)
 {
+    if(isFolder)
+    {
+        addToPlaylistDialog d;
+        //d.addPlaylists(playlistPaths);
+        if(d.exec()==QDialog::Accepted)
+        {
 
+        }
+    }
 }
 
 //playing songs
 void ZenPlayer::on_tracksListWidget_itemClicked(QListWidgetItem* item)
 {
 	int index=ui->tracksListWidget->row(item);
-	QString trackpath=tracksPaths.at(index);
+	QString trackpath=trackPaths.at(index);
     /*
     needs to be replaced with player functions
 	QDesktopServices::openUrl(QUrl::fromLocalFile(trackpath));
