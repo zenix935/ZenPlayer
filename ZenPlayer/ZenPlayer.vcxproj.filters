@@ -45,10 +45,21 @@
     <QtUic Include="closeFolderDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="addToPlaylistDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="closeFolderDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="addToPlaylistDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

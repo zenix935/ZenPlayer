@@ -93,6 +93,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <QtRcc Include="ZenPlayer.qrc" />
+    <QtUic Include="addToPlaylistDialog.ui" />
     <QtUic Include="closeFolderDialog.ui" />
     <QtUic Include="ZenPlayer.ui" />
     <QtMoc Include="ZenPlayer.h" />
@@ -101,6 +102,12 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="closeFolderDialog.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="addToPlaylistDialog.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="json.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

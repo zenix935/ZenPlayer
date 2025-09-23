@@ -8,10 +8,12 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent),ui(new Ui::ZenPlayer
     pause=true;
     ui->setupUi(this);
 	setWindowIcon(QIcon("pics/play.png"));
+    loadData();
 }
 
 ZenPlayer::~ZenPlayer()
 {
+    saveData();
     delete ui;
 }
 
@@ -102,6 +104,38 @@ void ZenPlayer::on_playButton_clicked()
 }
 
 //opening folders and making playlists
+void ZenPlayer::saveData()
+{
+    std::vector<std::string> temp;
+    for(auto& folder:folderPaths)
+        temp.push_back(folder.toStdString());
+    data["folders"]=temp;
+    temp.clear();
+	std::ofstream file("data.json");
+    if(file.is_open())
+        file<<data.dump(4);
+    else
+        qDebug()<<"There was a problem in saving data";
+}
+void ZenPlayer::loadData()
+{
+    std::ifstream file("data.json");
+    if(file.is_open())
+    {
+		file>>data;
+		file.close();
+		std::vector<std::string> temp=data["folders"];
+		for(const auto& folder:temp)
+		{
+			QString folderpath=QString::fromStdString(folder);
+			folderPaths.append(folderpath);
+			QString foldername=folderpath.section('/',-1);
+			ui->foldersListWidget->addItem(foldername);
+		}
+	}
+	else
+		qDebug()<<"There was a problem in loading data";
+}
 void ZenPlayer::on_addFolderButton_clicked()
 {
     QString folderpath=QFileDialog::getExistingDirectory(this,"Select a folder");
@@ -134,4 +168,19 @@ void ZenPlayer::on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item)
 		ui->tracksListWidget->clear();
 		tracksPaths.clear();
     }
+}
+void ZenPlayer::on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item)
+{
+
+}
+
+//playing songs
+void ZenPlayer::on_tracksListWidget_itemClicked(QListWidgetItem* item)
+{
+	int index=ui->tracksListWidget->row(item);
+	QString trackpath=tracksPaths.at(index);
+    /*
+    needs to be replaced with player functions
+	QDesktopServices::openUrl(QUrl::fromLocalFile(trackpath));
+    */
 }
