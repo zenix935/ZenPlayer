@@ -204,6 +204,16 @@ void ZenPlayer::on_addPlaylistButton_clicked()
 void ZenPlayer::on_playlistListWidget_itemClicked(QListWidgetItem* item)
 {
     isFolder=false;
+    int index=ui->playlistListWidget->row(item);
+	ui->tracksListWidget->clear();
+	trackPaths.clear();
+	for(const auto& track:data["playlists"][index]["tracks"])
+	{
+		QString trackpath=QString::fromStdString(track);
+		trackPaths.append(trackpath);
+		QString trackname=trackpath.section('/',-1);
+		ui->tracksListWidget->addItem(trackname);
+	}
 }
 void ZenPlayer::on_playlistListWidget_itemDoubleClicked(QListWidgetItem* item)  
 {  
@@ -252,5 +262,19 @@ void ZenPlayer::on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item)
 					tracks.push_back(trackpath.toStdString());
 			}
         }
+    }
+    else
+    {
+		int index=ui->tracksListWidget->row(item);
+		removeDialog d("Do you want to remove this track ("+item->text()+") from this playlist?","Remove Track");
+		if(d.exec()==QDialog::Accepted)
+		{
+			auto& playlists=data["playlists"];
+			auto& tracks=playlists[ui->playlistListWidget->currentRow()]["tracks"];
+			auto it=std::remove_if(tracks.begin(),tracks.end(),[&](const json& track) {return track==trackPaths.at(index).toStdString();});
+			tracks.erase(it,tracks.end());
+			ui->tracksListWidget->takeItem(index);
+			trackPaths.removeAt(index);
+		}
     }
 }
