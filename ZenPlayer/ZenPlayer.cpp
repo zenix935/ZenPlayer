@@ -104,7 +104,7 @@ void ZenPlayer::on_playButton_clicked()
     }
 }
 
-//opening folders and making playlists
+//save and load
 void ZenPlayer::saveData()
 {
     std::vector<std::string> temp;
@@ -144,6 +144,8 @@ void ZenPlayer::loadData()
 	else
 		qDebug()<<"There was a problem in loading data";
 }
+
+//folders functions
 void ZenPlayer::on_addFolderButton_clicked()
 {
     QString folderpath=QFileDialog::getExistingDirectory(this,"Select a folder");
@@ -178,6 +180,8 @@ void ZenPlayer::on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item)
 		trackPaths.clear();
     }
 }
+
+//playlist functions
 void ZenPlayer::on_addPlaylistButton_clicked()
 {
     createPlaylistDialog d;
@@ -199,7 +203,7 @@ void ZenPlayer::on_addPlaylistButton_clicked()
 }
 void ZenPlayer::on_playlistListWidget_itemClicked(QListWidgetItem* item)
 {
-
+    isFolder=false;
 }
 void ZenPlayer::on_playlistListWidget_itemDoubleClicked(QListWidgetItem* item)  
 {  
@@ -217,26 +221,36 @@ void ZenPlayer::on_playlistListWidget_itemDoubleClicked(QListWidgetItem* item)
         }
     }
 }
+
+//tracks functions
+void ZenPlayer::on_tracksListWidget_itemClicked(QListWidgetItem* item)
+{
+    int index=ui->tracksListWidget->row(item);
+    QString trackpath=trackPaths.at(index);
+    /*
+    needs to be replaced with player functions
+    QDesktopServices::openUrl(QUrl::fromLocalFile(trackpath));
+    */
+}
 void ZenPlayer::on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item)
 {
     if(isFolder)
     {
-        addToPlaylistDialog d;
-        //d.addPlaylists(playlistPaths);
+        QList<QString> playlists;
+        for(const auto& p:data["playlists"])
+            playlists.append(QString::fromStdString(p["name"]));
+        addToPlaylistDialog d(playlists);
         if(d.exec()==QDialog::Accepted)
         {
-
+			int playlistIndex=d.ind;
+			if(playlistIndex!=-1)
+			{
+				int trackIndex=ui->tracksListWidget->row(item);
+				QString trackpath=trackPaths.at(trackIndex);
+				auto& tracks=data["playlists"][playlistIndex]["tracks"];
+				if(std::find(tracks.begin(),tracks.end(),trackpath.toStdString())==tracks.end())
+					tracks.push_back(trackpath.toStdString());
+			}
         }
     }
-}
-
-//playing songs
-void ZenPlayer::on_tracksListWidget_itemClicked(QListWidgetItem* item)
-{
-	int index=ui->tracksListWidget->row(item);
-	QString trackpath=trackPaths.at(index);
-    /*
-    needs to be replaced with player functions
-	QDesktopServices::openUrl(QUrl::fromLocalFile(trackpath));
-    */
 }

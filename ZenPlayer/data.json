@@ -5,7 +5,9 @@
     "playlists": [
         {
             "name": "pp",
-            "tracks": []
+            "tracks": [
+                "C:/Users/nosoo/Music/test/Gdaal - Perc (feat. Aneea).mp3"
+            ]
         },
         {
             "name": "p",

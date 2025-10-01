@@ -44,10 +44,8 @@ private slots:
     void on_playlistListWidget_itemClicked(QListWidgetItem* item);
 	void on_playlistListWidget_itemDoubleClicked(QListWidgetItem* item);
 
+    void on_tracksListWidget_itemClicked(QListWidgetItem* item);
     void on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item);
-
-	void on_tracksListWidget_itemClicked(QListWidgetItem* item);
-
 private:
     Ui::ZenPlayerClass *ui;
     bool mute,repeat,shuffle,pause,isFolder;
