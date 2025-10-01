@@ -151,19 +151,6 @@ void ZenPlayer::on_addFolderButton_clicked()
 	QString foldername=folderpath.section('/',-1);
 	ui->foldersListWidget->addItem(foldername);
 }
-void ZenPlayer::on_addPlaylistButton_clicked()
-{
-    createPlaylistDialog d;
-    if(d.exec()==QDialog::Accepted)
-    {
-		if(!data.contains("playlists")||!data["playlists"].is_array())
-			data["playlists"]=json::array();
-        json newPlaylist;
-		newPlaylist["name"]=d.getPlaylistName().toStdString();
-		newPlaylist["tracks"]=json::array();
-		data["playlists"].push_back(newPlaylist);
-    }
-}
 void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
 {
     isFolder=true;
@@ -182,13 +169,52 @@ void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
 void ZenPlayer::on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item)
 {
 	int index=ui->foldersListWidget->row(item);
-    closeFolderDialog d;
+    removeDialog d("Do you want to remove this folder ("+item->text()+")?","Remove Folder");
     if(d.exec()==QDialog::Accepted)
     {
 		folderPaths.removeAt(index);
 		ui->foldersListWidget->takeItem(index);
 		ui->tracksListWidget->clear();
 		trackPaths.clear();
+    }
+}
+void ZenPlayer::on_addPlaylistButton_clicked()
+{
+    createPlaylistDialog d;
+    if(d.exec()==QDialog::Accepted)
+    {
+        if(!data.contains("playlists")||!data["playlists"].is_array())
+            data["playlists"]=json::array();
+        json newPlaylist;
+        newPlaylist["name"]=d.getPlaylistName().toStdString();
+        newPlaylist["tracks"]=json::array();
+        data["playlists"].push_back(newPlaylist);
+        ui->playlistListWidget->clear();
+        for(const auto& playlist:data["playlists"])
+        {
+            QString playlistname=QString::fromStdString(playlist["name"]);
+            ui->playlistListWidget->addItem(playlistname);
+        }
+    }
+}
+void ZenPlayer::on_playlistListWidget_itemClicked(QListWidgetItem* item)
+{
+
+}
+void ZenPlayer::on_playlistListWidget_itemDoubleClicked(QListWidgetItem* item)  
+{  
+	removeDialog d("Do you want to remove this playlist ("+item->text()+")?","Remove Playlist");
+    if(d.exec()==QDialog::Accepted)
+    {
+        auto& playlists=data["playlists"];
+        auto it=std::remove_if(playlists.begin(),playlists.end(),[&](const json& playlist) {return playlist["name"]==item->text().toStdString();});
+        playlists.erase(it,playlists.end());
+        ui->playlistListWidget->clear();
+        for(const auto& playlist:data["playlists"])
+        {
+            QString playlistname=QString::fromStdString(playlist["name"]);
+            ui->playlistListWidget->addItem(playlistname);
+        }
     }
 }
 void ZenPlayer::on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item)

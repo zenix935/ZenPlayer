@@ -94,7 +94,7 @@
   <ItemGroup>
     <QtRcc Include="ZenPlayer.qrc" />
     <QtUic Include="addToPlaylistDialog.ui" />
-    <QtUic Include="closeFolderDialog.ui" />
+    <QtUic Include="removeDialog.ui" />
     <QtUic Include="createPlaylistDialog.ui" />
     <QtUic Include="ZenPlayer.ui" />
     <QtMoc Include="ZenPlayer.h" />
@@ -102,7 +102,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="closeFolderDialog.h" />
+    <QtMoc Include="removeDialog.h" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="addToPlaylistDialog.h" />

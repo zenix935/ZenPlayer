@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>closeFolderDialog</class>
- <widget class="QDialog" name="closeFolderDialog">
+ <class>removeDialog</class>
+ <widget class="QDialog" name="removeDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>229</width>
-    <height>109</height>
+    <width>292</width>
+    <height>115</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,7 +48,7 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Do you want to close this folder?</string>
+      <string>text</string>
      </property>
     </widget>
    </item>
@@ -59,7 +59,7 @@
   <connection>
    <sender>NoButton</sender>
    <signal>clicked()</signal>
-   <receiver>closeFolderDialog</receiver>
+   <receiver>removeDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -75,7 +75,7 @@
   <connection>
    <sender>yesButton</sender>
    <signal>clicked()</signal>
-   <receiver>closeFolderDialog</receiver>
+   <receiver>removeDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

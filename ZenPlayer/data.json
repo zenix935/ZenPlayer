@@ -4,7 +4,11 @@
     ],
     "playlists": [
         {
-            "name": "ppp",
+            "name": "pp",
+            "tracks": []
+        },
+        {
+            "name": "p",
             "tracks": []
         }
     ]

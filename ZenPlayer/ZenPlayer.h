@@ -5,7 +5,7 @@
 #include <fstream>
 #include "json.hpp"
 #include "ui_ZenPlayer.h"
-#include "closeFolderDialog.h"
+#include "removeDialog.h"
 #include "addToPlaylistDialog.h"
 #include "createPlaylistDialog.h"
 
@@ -35,10 +35,15 @@ private slots:
 
     void saveData();
 	void loadData();
+
     void on_addFolderButton_clicked();
-    void on_addPlaylistButton_clicked();
 	void on_foldersListWidget_itemClicked(QListWidgetItem* item);
     void on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item);
+
+    void on_addPlaylistButton_clicked();
+    void on_playlistListWidget_itemClicked(QListWidgetItem* item);
+	void on_playlistListWidget_itemDoubleClicked(QListWidgetItem* item);
+
     void on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item);
 
 	void on_tracksListWidget_itemClicked(QListWidgetItem* item);

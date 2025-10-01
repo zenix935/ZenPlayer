@@ -42,7 +42,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="closeFolderDialog.ui">
+    <QtUic Include="removeDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="addToPlaylistDialog.ui">
@@ -53,7 +53,7 @@
     </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="closeFolderDialog.h">
+    <QtMoc Include="removeDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="addToPlaylistDialog.h">
