@@ -1,38 +1,44 @@
 ZenPlayer_autogen/timestamp: \
 	C:/MINE/codes/ZenPlayer/CMakeLists.txt \
-	C:/MINE/codes/ZenPlayer/build/CMakeFiles/3.30.5-msvc23/CMakeCXXCompiler.cmake \
-	C:/MINE/codes/ZenPlayer/build/CMakeFiles/3.30.5-msvc23/CMakeRCCompiler.cmake \
-	C:/MINE/codes/ZenPlayer/build/CMakeFiles/3.30.5-msvc23/CMakeSystem.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CMakeCXXInformation.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CMakeCommonLanguageInclude.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CMakeGenericSystem.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CMakeInitializeConfigs.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CMakeLanguageInformation.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CMakeRCInformation.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CMakeSystemSpecificInformation.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CMakeSystemSpecificInitialize.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CheckCXXCompilerFlag.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CheckCXXSourceCompiles.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CheckIncludeFileCXX.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/CheckLibraryExists.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/Compiler/CMakeCommonCompilerMacros.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/Compiler/MSVC-CXX.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/Compiler/MSVC.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/FindPackageMessage.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/FindThreads.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/FindVulkan.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/GNUInstallDirs.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/Internal/CheckCompilerFlag.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/Internal/CheckFlagCommonConfig.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/Internal/CheckSourceCompiles.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/Platform/Windows-Initialize.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/Platform/Windows-MSVC-CXX.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/Platform/Windows-MSVC.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/Platform/Windows.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.30/Modules/Platform/WindowsPaths.cmake \
+	C:/MINE/codes/ZenPlayer/build/CMakeFiles/4.4.0-rc3/CMakeCXXCompiler.cmake \
+	C:/MINE/codes/ZenPlayer/build/CMakeFiles/4.4.0-rc3/CMakeRCCompiler.cmake \
+	C:/MINE/codes/ZenPlayer/build/CMakeFiles/4.4.0-rc3/CMakeSystem.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CMakeCXXInformation.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CMakeCommonLanguageInclude.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CMakeFindDependencyMacro.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CMakeGenericSystem.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CMakeInitializeConfigs.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CMakeLanguageInformation.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CMakeRCInformation.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CMakeSystemSpecificInformation.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CMakeSystemSpecificInitialize.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CheckCXXCompilerFlag.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CheckCXXSourceCompiles.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CheckIncludeFileCXX.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/CheckLibraryExists.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Compiler/CMakeCommonCompilerMacros.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Compiler/MSVC-CXX.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Compiler/MSVC.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/FindPackageHandleStandardArgs.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/FindPackageMessage.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/FindThreads.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/FindVulkan.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/GNUInstallDirs.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Internal/CMakeCXXLinkerInformation.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Internal/CMakeCommonLinkerInformation.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Internal/CheckCompilerFlag.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Internal/CheckFlagCommonConfig.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Internal/CheckSourceCompiles.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Linker/MSVC-CXX.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Linker/MSVC.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Platform/Linker/Windows-MSVC-CXX.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Platform/Linker/Windows-MSVC.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Platform/Windows-Initialize.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Platform/Windows-MSVC-CXX.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Platform/Windows-MSVC.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Platform/Windows.cmake \
+	C:/Program\ Files/CMake/share/cmake-4.4/Modules/Platform/WindowsPaths.cmake \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/FindWrapAtomic.cmake \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/FindWrapVulkanHeaders.cmake \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/Qt6Config.cmake \
@@ -82,7 +88,7 @@ ZenPlayer_autogen/timestamp: \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/QtPublicToolHelpers.cmake \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/QtPublicWalkLibsHelpers.cmake \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/QtPublicWindowsHelpers.cmake \
-	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/qt.toolchain.cmake \
+	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/windows/app.exe.manifest.in \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6Core/Qt6CoreAdditionalTargetInfo.cmake \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6Core/Qt6CoreConfig.cmake \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6Core/Qt6CoreConfigExtras.cmake \
@@ -259,4 +265,5 @@ ZenPlayer_autogen/timestamp: \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargets.cmake \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargetsPrecheck.cmake \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsVersionlessTargets.cmake \
-	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe
+	c:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/qt.toolchain.cmake \
+	C:/Program\ Files/CMake/bin/cmake.exe

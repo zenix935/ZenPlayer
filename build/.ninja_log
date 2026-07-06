@@ -1,6 +1,16 @@
 # ninja log v6
 21	286	8050434185543446	ZenPlayer_autogen/timestamp	8f063a1fc263e889
-21	286	8050434185543446	ZenPlayer_autogen/mocs_compilation.cpp	8f063a1fc263e889
 298	703	8050434186836500	CMakeFiles/ZenPlayer.dir/ZenPlayer_autogen/mocs_compilation.cpp.obj	d8c56204f70024ab
+21	286	8050434185543446	ZenPlayer_autogen/mocs_compilation.cpp	8f063a1fc263e889
 21	286	8050434185543446	C:/MINE/codes/ZenPlayer/build/ZenPlayer_autogen/timestamp	8f063a1fc263e889
 21	286	8050434185543446	C:/MINE/codes/ZenPlayer/build/ZenPlayer_autogen/mocs_compilation.cpp	8f063a1fc263e889
+88	303	8050464520318449	ZenPlayer_autogen/timestamp	163cc698e3b6d1e9
+88	303	8050464520318449	ZenPlayer_autogen/mocs_compilation.cpp	163cc698e3b6d1e9
+88	303	8050464520318449	C:/MINE/codes/ZenPlayer/build/ZenPlayer_autogen/timestamp	163cc698e3b6d1e9
+88	303	8050464520318449	C:/MINE/codes/ZenPlayer/build/ZenPlayer_autogen/mocs_compilation.cpp	163cc698e3b6d1e9
+109	335	8050464521943756	QtVsCodeApp_autogen/timestamp	ae3612d5a1f0b9f1
+109	335	8050464521943756	QtVsCodeApp_autogen/mocs_compilation.cpp	ae3612d5a1f0b9f1
+109	335	8050464521943756	C:/MINE/codes/ZenPlayer/build/QtVsCodeApp_autogen/timestamp	ae3612d5a1f0b9f1
+109	335	8050464521943756	C:/MINE/codes/ZenPlayer/build/QtVsCodeApp_autogen/mocs_compilation.cpp	ae3612d5a1f0b9f1
+307	380	8050464522514536	CMakeFiles/ZenPlayer.dir/ZenPlayer_autogen/mocs_compilation.cpp.obj	f00d5ba8bc9da5bb
+337	399	8050464522796342	CMakeFiles/QtVsCodeApp.dir/QtVsCodeApp_autogen/mocs_compilation.cpp.obj	2be867c7e07f9ab2

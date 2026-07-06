@@ -21,5 +21,3 @@ qt_add_executable(QtVsCodeApp
 
 # Link against the Qt Widgets module
 target_link_libraries(QtVsCodeApp PRIVATE Qt6::Widgets)
-
-target_include_directories(ZenPlayer PRIVATE "C:/Qt/6.11.1/msvc2022_64/include")
