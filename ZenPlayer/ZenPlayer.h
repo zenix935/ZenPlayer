@@ -1,7 +1,9 @@
 #pragma once
-#include <QtWidgets/QMainWindow>
-#include <QtWidgets/QApplication>
+#include <QMainWindow>
+#include <QApplication>
 #include <QFileDialog>
+#include <QMediaPlayer>
+#include <QListWidgetItem>
 #include <fstream>
 #include "json.hpp"
 #include "ui_ZenPlayer.h"
@@ -9,47 +11,48 @@
 #include "addToPlaylistDialog.h"
 #include "createPlaylistDialog.h"
 
-using json=nlohmann::json;
+using json=nlohmann::json;  
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class ZenPlayerClass; };
-QT_END_NAMESPACE
+QT_BEGIN_NAMESPACE  
+namespace Ui { class ZenPlayerClass; };  
+QT_END_NAMESPACE  
 
-class ZenPlayer : public QMainWindow
-{
-    Q_OBJECT
+class ZenPlayer : public QMainWindow  
+{  
+   Q_OBJECT  
 
-public:
-    ZenPlayer(QWidget *parent = nullptr);
-    ~ZenPlayer();
+public:  
+   ZenPlayer(QWidget *parent = nullptr);  
+   ~ZenPlayer();  
 
-private slots:
-    void on_muteButton_clicked();
-	void on_volumeSlider_valueChanged(int value);
+private slots:  
+   void on_muteButton_clicked();  
+   void on_volumeSlider_valueChanged(int value);  
 
-    void on_repeatButton_clicked();
-    void on_shuffleButton_clicked();
-    void on_previousButton_clicked();
-    void on_nextButton_clicked();
-    void on_playButton_clicked();
+   void on_repeatButton_clicked();  
+   void on_shuffleButton_clicked();  
+   void on_previousButton_clicked();  
+   void on_nextButton_clicked();  
+   void on_playButton_clicked();  
 
-    void saveData();
-	void loadData();
+   void saveData();  
+   void loadData();  
 
-    void on_addFolderButton_clicked();
-	void on_foldersListWidget_itemClicked(QListWidgetItem* item);
-    void on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item);
+   void on_addFolderButton_clicked();  
+   void on_foldersListWidget_itemClicked(QListWidgetItem* item);  
+   void on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item);  
 
-    void on_addPlaylistButton_clicked();
-    void on_playlistListWidget_itemClicked(QListWidgetItem* item);
-	void on_playlistListWidget_itemDoubleClicked(QListWidgetItem* item);
+   void on_addPlaylistButton_clicked();  
+   void on_playlistListWidget_itemClicked(QListWidgetItem* item);  
+   void on_playlistListWidget_itemDoubleClicked(QListWidgetItem* item);  
 
-    void on_tracksListWidget_itemClicked(QListWidgetItem* item);
-    void on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item);
-private:
-    Ui::ZenPlayerClass *ui;
-    bool mute,repeat,shuffle,pause,isFolder;
-	json data;
-    QList<QString> folderPaths;
-    QList<QString> trackPaths;
+   void on_tracksListWidget_itemClicked(QListWidgetItem* item);  
+   void on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item);  
+private:  
+   Ui::ZenPlayerClass *ui;  
+   //QMediaPlayer* player;  
+   bool mute,repeat,shuffle,pause,isFolder;  
+   json data;  
+   QList<QString> folderPaths;  
+   QList<QString> trackPaths;  
 };

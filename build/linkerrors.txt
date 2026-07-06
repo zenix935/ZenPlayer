@@ -1,0 +1,8 @@
+================================================================================
+Linker Errors
+Generated: 2026-07-06T12:17:05.804Z
+Total Errors: 1
+================================================================================
+
+[LNK2019] (MSVC)
+unresolved external symbol main referenced in function "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)

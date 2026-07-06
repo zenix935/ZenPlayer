@@ -8,7 +8,7 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent),ui(new Ui::ZenPlayer
     isFolder=true;
     pause=true;
     ui->setupUi(this);
-	setWindowIcon(QIcon("pics/play.png"));
+	setWindowIcon(QIcon("pics/icon2.png"));
     loadData();
 }
 
@@ -235,12 +235,9 @@ void ZenPlayer::on_playlistListWidget_itemDoubleClicked(QListWidgetItem* item)
 //tracks functions
 void ZenPlayer::on_tracksListWidget_itemClicked(QListWidgetItem* item)
 {
+    ui->playButton->setEnabled(true);
     int index=ui->tracksListWidget->row(item);
     QString trackpath=trackPaths.at(index);
-    /*
-    needs to be replaced with player functions
-    QDesktopServices::openUrl(QUrl::fromLocalFile(trackpath));
-    */
 }
 void ZenPlayer::on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item)
 {

@@ -440,7 +440,7 @@ height: 30px;</string>
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="folderTab">
        <attribute name="title">
@@ -457,6 +457,9 @@ height: 30px;</string>
           </property>
           <property name="cursor">
            <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>Open Folder</string>
           </property>
           <property name="styleSheet">
            <string notr="true">border-radius: 25px;
@@ -508,6 +511,12 @@ height: 50px</string>
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>Create Playlist</string>
           </property>
           <property name="styleSheet">
            <string notr="true">border-radius: 25px;
