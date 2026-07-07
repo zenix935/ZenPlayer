@@ -1,8 +1,5 @@
 C:/MINE/codes/ZenPlayer/build/CMakeFiles/ZenPlayer.dir
-C:/MINE/codes/ZenPlayer/build/CMakeFiles/QtVsCodeApp.dir
 C:/MINE/codes/ZenPlayer/build/CMakeFiles/edit_cache.dir
 C:/MINE/codes/ZenPlayer/build/CMakeFiles/rebuild_cache.dir
 C:/MINE/codes/ZenPlayer/build/CMakeFiles/ZenPlayer_autogen_timestamp_deps.dir
 C:/MINE/codes/ZenPlayer/build/CMakeFiles/ZenPlayer_autogen.dir
-C:/MINE/codes/ZenPlayer/build/CMakeFiles/QtVsCodeApp_autogen_timestamp_deps.dir
-C:/MINE/codes/ZenPlayer/build/CMakeFiles/QtVsCodeApp_autogen.dir

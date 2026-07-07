@@ -50,7 +50,7 @@ private slots:
    void on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item);  
 private:  
    Ui::ZenPlayerClass *ui;  
-   //QMediaPlayer* player;  
+   QMediaPlayer* player;  
    bool mute,repeat,shuffle,pause,isFolder;  
    json data;  
    QList<QString> folderPaths;  
