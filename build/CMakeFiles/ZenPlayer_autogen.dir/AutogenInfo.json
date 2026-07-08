@@ -410,7 +410,8 @@
 		"C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6Multimedia/Qt6QWindowsMediaPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6Multimedia/Qt6QWindowsMediaPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6Multimedia/Qt6MultimediaVersionlessAliasTargets.cmake",
-		"C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/windows/app.exe.manifest.in"
+		"C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/windows/app.exe.manifest.in",
+		"C:/MINE/codes/ZenPlayer/ZenPlayer.qrc"
 	],
 	"CMAKE_SOURCE_DIR" : "C:/MINE/codes/ZenPlayer",
 	"CROSS_CONFIG" : false,

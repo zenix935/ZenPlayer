@@ -8,7 +8,7 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent),ui(new Ui::ZenPlayer
     isFolder=true;
     pause=true;
     ui->setupUi(this);
-	setWindowIcon(QIcon("pics/icon2.png"));
+	setWindowIcon(QIcon(":/pics/pics/Icon2.png"));
     loadData();
 }
 
@@ -23,7 +23,7 @@ void ZenPlayer::on_muteButton_clicked()
 {
     if(!mute)
     {
-        QIcon icon("pics/mute.png");
+        QIcon icon(":/pics/pics/mute.png");
         ui->muteButton->setIcon(icon);
         ui->muteButton->setToolTip("Unmute");
         mute=true;
@@ -31,7 +31,7 @@ void ZenPlayer::on_muteButton_clicked()
     }
     else
     {
-        QIcon icon("pics/sound.png");
+        QIcon icon(":/pics/pics/sound.png");
         ui->muteButton->setIcon(icon);
         ui->muteButton->setToolTip("Mute");
         mute=false;
@@ -48,14 +48,14 @@ void ZenPlayer::on_repeatButton_clicked()
 {
 	if(!repeat)
 	{
-		QIcon icon("pics/repeat-one.png");
+		QIcon icon(":/pics/pics/repeat-one.png");
 		ui->repeatButton->setIcon(icon);
         ui->repeatButton->setToolTip("Enable repeat all");
 		repeat=true;
 	}
 	else
 	{
-		QIcon icon("pics/repeat-all.png");
+		QIcon icon(":/pics/pics/repeat-all.png");
 		ui->repeatButton->setIcon(icon);
         ui->repeatButton->setToolTip("Enable repeat one");
 		repeat=false;
@@ -65,14 +65,14 @@ void ZenPlayer::on_shuffleButton_clicked()
 {
     if(!shuffle)
     {
-        QIcon icon("pics/shuffle.png");
+        QIcon icon(":/pics/pics/shuffle.png");
         ui->shuffleButton->setIcon(icon);
         ui->shuffleButton->setToolTip("Disable shuffle");
         shuffle=true;
     }
     else
     {
-        QIcon icon("pics/cycle.png");
+        QIcon icon(":/pics/pics/cycle.png");
         ui->shuffleButton->setIcon(icon);
         ui->shuffleButton->setToolTip("Enable shuffle");
         shuffle=false;
@@ -90,14 +90,14 @@ void ZenPlayer::on_playButton_clicked()
 {
     if(!pause)
     {
-        QIcon icon("pics/play.png");
+        QIcon icon(":/pics/pics/play.png");
         ui->playButton->setIcon(icon);
         ui->playButton->setToolTip("Play");
         pause=true;
     }
     else
     {
-        QIcon icon("pics/pause.png");
+        QIcon icon(":/pics/pics/pause.png");
         ui->playButton->setIcon(icon);
         ui->playButton->setToolTip("Pause");
         pause=false;
