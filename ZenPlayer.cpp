@@ -11,6 +11,13 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
 	setWindowIcon(QIcon(":/pics/pics/icon.png"));
     loadData();
 
+    player = new QMediaPlayer(this);
+    audioOutput = new QAudioOutput(this);
+    player->setAudioOutput(audioOutput);
+    
+    // Set initial volume from slider
+    audioOutput->setVolume(ui->volumeSlider->value() / 100.0);
+
     // Enable custom context menus
     ui->foldersListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->playlistListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -38,6 +45,8 @@ void ZenPlayer::on_muteButton_clicked()
         ui->muteButton->setToolTip("Unmute");
         mute=true;
         ui->volumeSlider->setEnabled(false);
+        if (audioOutput)
+            audioOutput->setMuted(true);
     }
     else
     {
@@ -46,11 +55,15 @@ void ZenPlayer::on_muteButton_clicked()
         ui->muteButton->setToolTip("Mute");
         mute=false;
         ui->volumeSlider->setEnabled(true);
+        if (audioOutput)
+            audioOutput->setMuted(false);
     }
 }
 void ZenPlayer::on_volumeSlider_valueChanged(int value)
 {
 	ui->volumeLabel->setText(QString::number(value));
+    if (audioOutput)
+        audioOutput->setVolume(value / 100.0);
 }
 
 //controls
@@ -98,12 +111,34 @@ void ZenPlayer::on_nextButton_clicked()
 }
 void ZenPlayer::on_playButton_clicked()
 {
+    QListWidgetItem* currentItem=ui->tracksListWidget->currentItem();
+    if (!currentItem) return;
+
+    int index=ui->tracksListWidget->row(currentItem);
+    if (index<0 || index>=trackPaths.size()) return;
+
+    QString trackpath=trackPaths.at(index);
+    QUrl trackUrl=QUrl::fromLocalFile(trackpath);
+
+    // If the selected track is different from the currently loaded one, play the new one!
+    if (player->source()!=trackUrl)
+    {
+        playTrack();
+        QIcon icon(":/pics/pics/pause.png");
+        ui->playButton->setIcon(icon);
+        ui->playButton->setToolTip("Pause");
+        pause=false;
+        return;
+    }
+
     if(!pause)
     {
         QIcon icon(":/pics/pics/play.png");
         ui->playButton->setIcon(icon);
         ui->playButton->setToolTip("Play");
         pause=true;
+        if (player)
+            player->pause();
     }
     else
     {
@@ -111,6 +146,7 @@ void ZenPlayer::on_playButton_clicked()
         ui->playButton->setIcon(icon);
         ui->playButton->setToolTip("Pause");
         pause=false;
+        playTrack();
     }
 }
 
@@ -338,6 +374,25 @@ void ZenPlayer::on_tabWidget_currentChanged(int index)
             ui->tracksListWidget->clear();
             trackPaths.clear();
         }
+    }
+}
+
+void ZenPlayer::playTrack()
+{
+    if (!player) return;
+
+    QListWidgetItem* currentItem=ui->tracksListWidget->currentItem();
+    if (!currentItem) return;
+
+    int index=ui->tracksListWidget->row(currentItem);
+    if (index>=0 && index<trackPaths.size())
+    {
+        QString trackpath=trackPaths.at(index);
+        QUrl trackUrl=QUrl::fromLocalFile(trackpath);
+        
+        if (player->source()!=trackUrl)
+            player->setSource(trackUrl);
+        player->play();
     }
 }
 

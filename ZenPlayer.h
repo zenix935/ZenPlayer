@@ -2,6 +2,8 @@
 #include <QApplication>
 #include <QFileDialog>
 #include <QMediaPlayer>
+#include <QAudioOutput>
+#include <QUrl>
 #include <QListWidgetItem>
 #include <QMenu>
 #include <QPoint>
@@ -51,9 +53,11 @@ private slots:
    void showTracksContextMenu(const QPoint &pos);
 
    void on_tabWidget_currentChanged(int index);
+   void playTrack();
 private:  
    Ui::ZenPlayerClass *ui;
    QMediaPlayer* player;
+   QAudioOutput* audioOutput;
    bool mute,repeat,shuffle,pause,isFolder;
    json data;
    QList<QString> folderPaths;
