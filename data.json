@@ -12,7 +12,10 @@
         },
         {
             "name": "meow",
-            "tracks": []
+            "tracks": [
+                "C:/Users/nosoo/Music/test/Gdaal - Perc (feat. Aneea).mp3",
+                "C:/MINE/music/4chaos - Dota.mp3"
+            ]
         }
     ]
 }

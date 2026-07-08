@@ -118,6 +118,7 @@ ZenPlayer_autogen/timestamp: \
 	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/VC/Tools/MSVC/14.43.34808/include/version \
 	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/VC/Tools/MSVC/14.43.34808/include/yvals.h \
 	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/VC/Tools/MSVC/14.43.34808/include/yvals_core.h \
+	C:/Qt/6.11.1/msvc2022_64/include/QtCore/QFileInfo \
 	C:/Qt/6.11.1/msvc2022_64/include/QtCore/QPoint \
 	C:/Qt/6.11.1/msvc2022_64/include/QtCore/q17memory.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtCore/q20bit.h \

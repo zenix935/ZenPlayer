@@ -177,7 +177,11 @@ void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
 		trackPaths.append(fullPath);
 	}
 	ui->tracksListWidget->clear();
-	ui->tracksListWidget->addItems(musicFiles);
+	for(const auto& file:musicFiles)
+	{
+		QFileInfo fileInfo(file);
+		ui->tracksListWidget->addItem(fileInfo.completeBaseName());
+	}
 }
 void ZenPlayer::showFoldersContextMenu(const QPoint &pos)
 {
@@ -228,7 +232,8 @@ void ZenPlayer::on_playlistListWidget_itemClicked(QListWidgetItem* item)
 		QString trackpath=QString::fromStdString(track);
 		trackPaths.append(trackpath);
 		QString trackname=trackpath.section('/',-1);
-		ui->tracksListWidget->addItem(trackname);
+		QFileInfo fileInfo(trackname);
+		ui->tracksListWidget->addItem(fileInfo.completeBaseName());
 	}
 }
 void ZenPlayer::showPlaylistsContextMenu(const QPoint &pos)
