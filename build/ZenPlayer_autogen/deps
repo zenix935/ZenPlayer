@@ -272,6 +272,9 @@ ZenPlayer_autogen/timestamp: \
 	C:/Qt/6.11.1/msvc2022_64/include/QtCore/qxptype_traits.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtCore/qyieldcpu.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/QCursor \
+	C:/Qt/6.11.1/msvc2022_64/include/QtGui/QPainter \
+	C:/Qt/6.11.1/msvc2022_64/include/QtGui/QPainterPath \
+	C:/Qt/6.11.1/msvc2022_64/include/QtGui/QPixmap \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qaction.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qbitmap.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qbrush.h \
@@ -288,13 +291,17 @@ ZenPlayer_autogen/timestamp: \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qinputmethod.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qkeysequence.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qpaintdevice.h \
+	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qpainter.h \
+	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qpainterpath.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qpalette.h \
+	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qpen.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qpixelformat.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qpixmap.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qpolygon.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qregion.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qrgb.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qrgba64.h \
+	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qtextoption.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qtgui-config.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qtguiexports.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qtguiglobal.h \
@@ -303,9 +310,11 @@ ZenPlayer_autogen/timestamp: \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qwindowdefs.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtGui/qwindowdefs_win.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtMultimedia/QAudioOutput \
+	C:/Qt/6.11.1/msvc2022_64/include/QtMultimedia/QMediaMetaData \
 	C:/Qt/6.11.1/msvc2022_64/include/QtMultimedia/QMediaPlayer \
 	C:/Qt/6.11.1/msvc2022_64/include/QtMultimedia/qaudio.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtMultimedia/qaudiooutput.h \
+	C:/Qt/6.11.1/msvc2022_64/include/QtMultimedia/qmediametadata.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtMultimedia/qmediaplayer.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtMultimedia/qtaudio.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtMultimedia/qtmultimedia-config.h \

@@ -18,6 +18,10 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     // Set initial volume from slider
     audioOutput->setVolume(ui->volumeSlider->value() / 100.0);
 
+    // Set initial track info and picture states, nya!
+    setDefaultTrackPic();
+    ui->trackInfoLabel->setText("No Song Playing");
+
     // Enable custom context menus
     ui->foldersListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->playlistListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -27,6 +31,9 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     connect(ui->foldersListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showFoldersContextMenu);
     connect(ui->playlistListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showPlaylistsContextMenu);
     connect(ui->tracksListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showTracksContextMenu);
+
+    // Connect QMediaPlayer signals, nya!
+    connect(player, &QMediaPlayer::metaDataChanged, this, &ZenPlayer::handleMetadataChanged);
 }
 
 ZenPlayer::~ZenPlayer()
@@ -61,9 +68,10 @@ void ZenPlayer::on_muteButton_clicked()
 }
 void ZenPlayer::on_volumeSlider_valueChanged(int value)
 {
+    volume=value;
 	ui->volumeLabel->setText(QString::number(value));
     if (audioOutput)
-        audioOutput->setVolume(value / 100.0);
+        audioOutput->setVolume(value/100.0);
 }
 
 //controls
@@ -157,6 +165,7 @@ void ZenPlayer::saveData()
     for(auto& folder:folderPaths)
         temp.push_back(folder.toStdString());
     data["folders"]=temp;
+    data["volume"]=std::to_string(volume);
     temp.clear();
 	std::ofstream file("data.json");
     if(file.is_open())
@@ -171,6 +180,11 @@ void ZenPlayer::loadData()
     {
 		file>>data;
 		file.close();
+        std::string tempVolume=data["volume"];
+        volume=std::stoi(tempVolume);
+        ui->volumeLabel->setText(QString::number(volume));
+        QSignalBlocker blocker(ui->volumeSlider);
+        ui->volumeSlider->setValue(volume);
 		std::vector<std::string> temp=data["folders"];
 		for(const auto& folder:temp)
 		{
@@ -377,6 +391,7 @@ void ZenPlayer::on_tabWidget_currentChanged(int index)
     }
 }
 
+//playing functions
 void ZenPlayer::playTrack()
 {
     if (!player) return;
@@ -393,7 +408,93 @@ void ZenPlayer::playTrack()
         if (player->source()!=trackUrl)
             player->setSource(trackUrl);
         player->play();
+        audioOutput->setVolume(volume/100.0);
     }
+}
+
+void ZenPlayer::handleMetadataChanged()
+{
+    QMediaMetaData metadata=player->metaData();
+    QString title=metadata.value(QMediaMetaData::Title).toString();
+
+    if (title.isEmpty())
+    {
+        QListWidgetItem* currentItem=ui->tracksListWidget->currentItem();
+        if (currentItem)
+            title=currentItem->text();
+        else
+            title=player->source().toLocalFile().section('/', -1).section('.', 0, -2);
+    }
+    
+    ui->trackInfoLabel->setText(title);
+
+    QVariant coverArtVariant=metadata.value(QMediaMetaData::CoverArtImage);
+    if (coverArtVariant.isValid())
+    {
+        QImage coverImg;
+        if (coverArtVariant.canConvert<QImage>())
+            coverImg=coverArtVariant.value<QImage>();
+        else if (coverArtVariant.canConvert<QPixmap>())
+            coverImg=coverArtVariant.value<QPixmap>().toImage();
+
+        if (!coverImg.isNull())
+        {
+            ui->trackPicLabel->setStyleSheet("border: 1px solid #444444; border-radius: 15px;");
+            QPixmap pm=QPixmap::fromImage(coverImg);
+            QPixmap roundedPm=getRoundedPixmap(pm, 15);
+            ui->trackPicLabel->setPixmap(roundedPm);
+            ui->trackPicLabel->setAlignment(Qt::AlignCenter);
+            return;
+        }
+    }
+    
+    setDefaultTrackPic();
+}
+
+void ZenPlayer::setDefaultTrackPic()
+{
+    ui->trackPicLabel->setStyleSheet(
+        "QLabel {"
+        "  border: 2px #555555;"
+        "  border-radius: 15px;"
+        "  background-color: #2b2b2b;"
+        "}"
+    );
+    ui->trackPicLabel->setPixmap(QPixmap());
+}
+
+QPixmap ZenPlayer::getRoundedPixmap(const QPixmap& src, int radius)
+{
+    if (src.isNull()) return src;
+
+    QSize labelSize = ui->trackPicLabel->size();
+    if (labelSize.width()<=0 || labelSize.height()<=0)
+        labelSize = QSize(200, 200);
+
+    QPixmap scaledSrc=src.scaled(labelSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+    
+    QPixmap cropped(labelSize);
+    cropped.fill(Qt::transparent);
+    QPainter cropper(&cropped);
+    int xOffset=(scaledSrc.width()-labelSize.width())/2;
+    int yOffset=(scaledSrc.height()-labelSize.height())/2;
+    cropper.drawPixmap(0, 0, scaledSrc, xOffset, yOffset, labelSize.width(), labelSize.height());
+    cropper.end();
+
+    QPixmap target(labelSize);
+    target.fill(Qt::transparent);
+
+    QPainter painter(&target);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+
+    QPainterPath path;
+    path.addRoundedRect(QRectF(0, 0, labelSize.width(), labelSize.height()), radius, radius);
+    painter.setClipPath(path);
+    painter.drawPixmap(0, 0, cropped);
+    painter.end();
+
+    return target;
 }
 
 

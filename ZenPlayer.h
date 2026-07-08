@@ -9,6 +9,10 @@
 #include <QPoint>
 #include <QCursor>
 #include <QFileInfo>
+#include <QMediaMetaData>
+#include <QPainter>
+#include <QPainterPath>
+#include <QPixmap>
 #include <fstream>
 #include "json.hpp"
 #include "ui_ZenPlayer.h"
@@ -53,14 +57,21 @@ private slots:
    void showTracksContextMenu(const QPoint &pos);
 
    void on_tabWidget_currentChanged(int index);
+
    void playTrack();
+   void handleMetadataChanged();
+
 private:  
    Ui::ZenPlayerClass *ui;
    QMediaPlayer* player;
    QAudioOutput* audioOutput;
    bool mute,repeat,shuffle,pause,isFolder;
+   int volume;
    json data;
    QList<QString> folderPaths;
    QList<QString> trackPaths;
    QList<QString> playQueue;
+
+   void setDefaultTrackPic();
+   QPixmap getRoundedPixmap(const QPixmap& src, int radius);
 };
