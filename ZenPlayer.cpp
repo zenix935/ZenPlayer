@@ -309,4 +309,31 @@ void ZenPlayer::showTracksContextMenu(const QPoint &pos)
     }
 }
 
+//tab function
+void ZenPlayer::on_tabWidget_currentChanged(int index)
+{
+    if (index == 0) //folders tab
+    {
+        QListWidgetItem* currentItem=ui->foldersListWidget->currentItem();
+        if (currentItem)
+            on_foldersListWidget_itemClicked(currentItem);
+        else
+        {
+            ui->tracksListWidget->clear();
+            trackPaths.clear();
+        }
+    }
+    else if (index == 1) //playlists tab
+    {
+        QListWidgetItem* currentItem = ui->playlistListWidget->currentItem();
+        if (currentItem)
+            on_playlistListWidget_itemClicked(currentItem);
+        else
+        {
+            ui->tracksListWidget->clear();
+            trackPaths.clear();
+        }
+    }
+}
+
 

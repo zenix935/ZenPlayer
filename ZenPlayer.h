@@ -48,6 +48,8 @@ private slots:
 
    void on_tracksListWidget_itemClicked(QListWidgetItem* item);  
    void showTracksContextMenu(const QPoint &pos);  
+
+   void on_tabWidget_currentChanged(int index);
 private:  
    Ui::ZenPlayerClass *ui;  
    QMediaPlayer* player;  
