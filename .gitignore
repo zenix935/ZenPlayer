@@ -1,19 +1,25 @@
 # Visual Studio tracking & caches
 .vs/
+
 *.sln
+
 *.vcxproj
+
 *.vcxproj.filters
+
 *.vcxproj.user
 
 # Compilation/Build outputs
 *.obj
+
 *.exe
+
 *.pdb
+
 *.ilk
-x64/
-x86/
+
 build/
-CMakeFiles/
+
 CMakeCache.txt
 
 # VS Code configurations (Optional: keep if you want team settings shared)
