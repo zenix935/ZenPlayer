@@ -15,25 +15,26 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     audioOutput = new QAudioOutput(this);
     player->setAudioOutput(audioOutput);
     
-    // Set initial volume from slider
+    //Set initial volume from slider
     audioOutput->setVolume(ui->volumeSlider->value() / 100.0);
 
-    // Set initial track info and picture states, nya!
+    //Set initial track info and picture states
     setDefaultTrackPic();
     ui->trackInfoLabel->setText("No Song Playing");
 
-    // Enable custom context menus
+    //Enable custom context menus
     ui->foldersListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->playlistListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->tracksListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    // Connect context menu signals to slots
+    //Connect context menu signals to slots
     connect(ui->foldersListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showFoldersContextMenu);
     connect(ui->playlistListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showPlaylistsContextMenu);
     connect(ui->tracksListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showTracksContextMenu);
 
-    // Connect QMediaPlayer signals, nya!
+    //Connect QMediaPlayer signals
     connect(player, &QMediaPlayer::metaDataChanged, this, &ZenPlayer::handleMetadataChanged);
+    connect(player, &QMediaPlayer::mediaStatusChanged, this, &ZenPlayer::handleMetadataChanged);
 }
 
 ZenPlayer::~ZenPlayer()
@@ -416,6 +417,9 @@ void ZenPlayer::handleMetadataChanged()
 {
     QMediaMetaData metadata=player->metaData();
     QString title=metadata.value(QMediaMetaData::Title).toString();
+    QString artist=metadata.value(QMediaMetaData::Author).toString();
+    if (artist.isEmpty())
+        artist=metadata.value(QMediaMetaData::ContributingArtist).toString();
 
     if (title.isEmpty())
     {
@@ -426,9 +430,16 @@ void ZenPlayer::handleMetadataChanged()
             title=player->source().toLocalFile().section('/', -1).section('.', 0, -2);
     }
     
-    ui->trackInfoLabel->setText(title);
+    QString displayText=title;
+    if (!artist.isEmpty())
+        displayText+=" - "+artist;
+        
+    ui->trackInfoLabel->setText(displayText);
 
     QVariant coverArtVariant=metadata.value(QMediaMetaData::CoverArtImage);
+    if (!coverArtVariant.isValid() || coverArtVariant.isNull())
+        coverArtVariant=metadata.value(QMediaMetaData::ThumbnailImage);
+
     if (coverArtVariant.isValid())
     {
         QImage coverImg;
@@ -439,7 +450,7 @@ void ZenPlayer::handleMetadataChanged()
 
         if (!coverImg.isNull())
         {
-            ui->trackPicLabel->setStyleSheet("border: 1px solid #444444; border-radius: 15px;");
+            ui->trackPicLabel->setStyleSheet("");
             QPixmap pm=QPixmap::fromImage(coverImg);
             QPixmap roundedPm=getRoundedPixmap(pm, 15);
             ui->trackPicLabel->setPixmap(roundedPm);
