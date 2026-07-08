@@ -1,6 +1,6 @@
 #include "ZenPlayer.h"
 
-ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent),ui(new Ui::ZenPlayerClass())
+ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlayerClass())
 {
     mute=false;
     repeat=false;
@@ -10,6 +10,16 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent),ui(new Ui::ZenPlayer
     ui->setupUi(this);
 	setWindowIcon(QIcon(":/pics/pics/Icon2.png"));
     loadData();
+
+    // Enable custom context menus
+    ui->foldersListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->playlistListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->tracksListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    // Connect context menu signals to slots
+    connect(ui->foldersListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showFoldersContextMenu);
+    connect(ui->playlistListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showPlaylistsContextMenu);
+    connect(ui->tracksListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showTracksContextMenu);
 }
 
 ZenPlayer::~ZenPlayer()
@@ -168,16 +178,20 @@ void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
 	ui->tracksListWidget->clear();
 	ui->tracksListWidget->addItems(musicFiles);
 }
-void ZenPlayer::on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item)
+void ZenPlayer::showFoldersContextMenu(const QPoint &pos)
 {
-	int index=ui->foldersListWidget->row(item);
-    removeDialog d("Do you want to remove this folder ("+item->text()+")?","Remove Folder");
-    if(d.exec()==QDialog::Accepted)
+    QListWidgetItem* item=ui->foldersListWidget->itemAt(pos);
+    if (!item) return;
+    QMenu menu(this);
+    QAction* removeAction=menu.addAction("Remove Folder");
+    QAction* selectedAction=menu.exec(ui->foldersListWidget->mapToGlobal(pos));
+    if (selectedAction==removeAction)
     {
-		folderPaths.removeAt(index);
-		ui->foldersListWidget->takeItem(index);
-		ui->tracksListWidget->clear();
-		trackPaths.clear();
+        int index=ui->foldersListWidget->row(item);
+        folderPaths.removeAt(index);
+        ui->foldersListWidget->takeItem(index);
+        ui->tracksListWidget->clear();
+        trackPaths.clear();
     }
 }
 
@@ -185,7 +199,7 @@ void ZenPlayer::on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item)
 void ZenPlayer::on_addPlaylistButton_clicked()
 {
     createPlaylistDialog d;
-    if(d.exec()==QDialog::Accepted)
+    if(d.exec()==QDialog::Accepted) 
     {
         if(!data.contains("playlists")||!data["playlists"].is_array())
             data["playlists"]=json::array();
@@ -215,10 +229,16 @@ void ZenPlayer::on_playlistListWidget_itemClicked(QListWidgetItem* item)
 		ui->tracksListWidget->addItem(trackname);
 	}
 }
-void ZenPlayer::on_playlistListWidget_itemDoubleClicked(QListWidgetItem* item)  
-{  
-	removeDialog d("Do you want to remove this playlist ("+item->text()+")?","Remove Playlist");
-    if(d.exec()==QDialog::Accepted)
+void ZenPlayer::showPlaylistsContextMenu(const QPoint &pos)
+{
+    QListWidgetItem* item=ui->playlistListWidget->itemAt(pos);
+    if (!item) return;
+
+    QMenu menu(this);
+    QAction* removeAction=menu.addAction("Remove Playlist");
+
+    QAction* selectedAction=menu.exec(ui->playlistListWidget->mapToGlobal(pos));
+    if (selectedAction==removeAction)
     {
         auto& playlists=data["playlists"];
         auto it=std::remove_if(playlists.begin(),playlists.end(),[&](const json& playlist) {return playlist["name"]==item->text().toStdString();});
@@ -239,40 +259,51 @@ void ZenPlayer::on_tracksListWidget_itemClicked(QListWidgetItem* item)
     int index=ui->tracksListWidget->row(item);
     QString trackpath=trackPaths.at(index);
 }
-void ZenPlayer::on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item)
+void ZenPlayer::showTracksContextMenu(const QPoint &pos)
 {
-    if(isFolder)
+    QListWidgetItem* item=ui->tracksListWidget->itemAt(pos);
+    if (!item) return;
+
+    QMenu menu(this);
+    if (isFolder)
     {
-        QList<QString> playlists;
-        for(const auto& p:data["playlists"])
-            playlists.append(QString::fromStdString(p["name"]));
-        addToPlaylistDialog d(playlists);
-        if(d.exec()==QDialog::Accepted)
+        QMenu* addToPlaylistMenu=menu.addMenu("Add to Playlist");
+        QList<QAction*> playlistActions;
+        for (const auto& p : data["playlists"])
         {
-			int playlistIndex=d.ind;
-			if(playlistIndex!=-1)
-			{
-				int trackIndex=ui->tracksListWidget->row(item);
-				QString trackpath=trackPaths.at(trackIndex);
-				auto& tracks=data["playlists"][playlistIndex]["tracks"];
-				if(std::find(tracks.begin(),tracks.end(),trackpath.toStdString())==tracks.end())
-					tracks.push_back(trackpath.toStdString());
-			}
+            QString name=QString::fromStdString(p["name"]);
+            QAction* action=addToPlaylistMenu->addAction(name);
+            playlistActions.append(action);
+        }
+
+        QAction* selectedAction=menu.exec(ui->tracksListWidget->mapToGlobal(pos));
+        if (selectedAction)
+        {
+            int playlistIndex=playlistActions.indexOf(selectedAction);
+            if (playlistIndex!=-1)
+            {
+                int trackIndex=ui->tracksListWidget->row(item);
+                QString trackpath=trackPaths.at(trackIndex);
+                auto& tracks=data["playlists"][playlistIndex]["tracks"];
+                if (std::find(tracks.begin(), tracks.end(), trackpath.toStdString())==tracks.end())
+                    tracks.push_back(trackpath.toStdString());
+            }
         }
     }
     else
     {
-		int index=ui->tracksListWidget->row(item);
-		removeDialog d("Do you want to remove this track ("+item->text()+") from this playlist?","Remove Track");
-		if(d.exec()==QDialog::Accepted)
-		{
-			auto& playlists=data["playlists"];
-			auto& tracks=playlists[ui->playlistListWidget->currentRow()]["tracks"];
-			auto it=std::remove_if(tracks.begin(),tracks.end(),[&](const json& track) {return track==trackPaths.at(index).toStdString();});
-			tracks.erase(it,tracks.end());
-			ui->tracksListWidget->takeItem(index);
-			trackPaths.removeAt(index);
-		}
+        QAction* removeAction=menu.addAction("Remove Track");
+        QAction* selectedAction=menu.exec(ui->tracksListWidget->mapToGlobal(pos));
+        if (selectedAction==removeAction)
+        {
+            int index=ui->tracksListWidget->row(item);
+            auto& playlists=data["playlists"];
+            auto& tracks=playlists[ui->playlistListWidget->currentRow()]["tracks"];
+            auto it=std::remove_if(tracks.begin(), tracks.end(), [&](const json& track) {return track==trackPaths.at(index).toStdString(); });
+            tracks.erase(it, tracks.end());
+            ui->tracksListWidget->takeItem(index);
+            trackPaths.removeAt(index);
+        }
     }
 }
 

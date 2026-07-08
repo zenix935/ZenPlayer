@@ -150,7 +150,7 @@ build ZenPlayer_autogen_timestamp_deps: phony
 #############################################
 # Utility command for ZenPlayer_autogen
 
-build ZenPlayer_autogen: phony CMakeFiles\ZenPlayer_autogen ZenPlayer_autogen\include\ui_ZenPlayer.h ZenPlayer_autogen\include\ui_removeDialog.h ZenPlayer_autogen\include\ui_createPlaylistDialog.h ZenPlayer_autogen\include\ui_addToPlaylistDialog.h ZenPlayer_autogen\timestamp ZenPlayer_autogen\mocs_compilation.cpp ZenPlayer_autogen_timestamp_deps
+build ZenPlayer_autogen: phony CMakeFiles\ZenPlayer_autogen ZenPlayer_autogen\include\ui_ZenPlayer.h ZenPlayer_autogen\include\ui_createPlaylistDialog.h ZenPlayer_autogen\timestamp ZenPlayer_autogen\mocs_compilation.cpp ZenPlayer_autogen_timestamp_deps
 
 
 #############################################
@@ -176,7 +176,7 @@ build ZenPlayer_autogen\EWIEGA46WW\qrc_ZenPlayer.cpp | ${cmake_ninja_workdir}Zen
 #############################################
 # Phony custom command for CMakeFiles\ZenPlayer_autogen
 
-build CMakeFiles\ZenPlayer_autogen ZenPlayer_autogen\include\ui_ZenPlayer.h ZenPlayer_autogen\include\ui_removeDialog.h ZenPlayer_autogen\include\ui_createPlaylistDialog.h ZenPlayer_autogen\include\ui_addToPlaylistDialog.h | ${cmake_ninja_workdir}CMakeFiles\ZenPlayer_autogen ${cmake_ninja_workdir}ZenPlayer_autogen\include\ui_ZenPlayer.h ${cmake_ninja_workdir}ZenPlayer_autogen\include\ui_removeDialog.h ${cmake_ninja_workdir}ZenPlayer_autogen\include\ui_createPlaylistDialog.h ${cmake_ninja_workdir}ZenPlayer_autogen\include\ui_addToPlaylistDialog.h: phony ZenPlayer_autogen\timestamp || ZenPlayer_autogen_timestamp_deps
+build CMakeFiles\ZenPlayer_autogen ZenPlayer_autogen\include\ui_ZenPlayer.h ZenPlayer_autogen\include\ui_createPlaylistDialog.h | ${cmake_ninja_workdir}CMakeFiles\ZenPlayer_autogen ${cmake_ninja_workdir}ZenPlayer_autogen\include\ui_ZenPlayer.h ${cmake_ninja_workdir}ZenPlayer_autogen\include\ui_createPlaylistDialog.h: phony ZenPlayer_autogen\timestamp || ZenPlayer_autogen_timestamp_deps
 
 # =============================================================================
 # Target aliases.

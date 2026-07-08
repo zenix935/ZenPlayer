@@ -3,11 +3,11 @@
 #include <QFileDialog>
 #include <QMediaPlayer>
 #include <QListWidgetItem>
+#include <QMenu>
+#include <QPoint>
 #include <fstream>
 #include "json.hpp"
 #include "ui_ZenPlayer.h"
-#include "removeDialog.h"
-#include "addToPlaylistDialog.h"
 #include "createPlaylistDialog.h"
 
 using json=nlohmann::json;  
@@ -39,14 +39,14 @@ private slots:
 
    void on_addFolderButton_clicked();  
    void on_foldersListWidget_itemClicked(QListWidgetItem* item);  
-   void on_foldersListWidget_itemDoubleClicked(QListWidgetItem* item);  
+   void showFoldersContextMenu(const QPoint &pos);  
 
    void on_addPlaylistButton_clicked();  
    void on_playlistListWidget_itemClicked(QListWidgetItem* item);  
-   void on_playlistListWidget_itemDoubleClicked(QListWidgetItem* item);  
+   void showPlaylistsContextMenu(const QPoint &pos);  
 
    void on_tracksListWidget_itemClicked(QListWidgetItem* item);  
-   void on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item);  
+   void showTracksContextMenu(const QPoint &pos);  
 private:  
    Ui::ZenPlayerClass *ui;  
    QMediaPlayer* player;  

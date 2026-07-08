@@ -3,14 +3,12 @@ ZenPlayer_autogen/timestamp: \
 	C:/MINE/codes/ZenPlayer/ZenPlayer.cpp \
 	C:/MINE/codes/ZenPlayer/ZenPlayer.h \
 	C:/MINE/codes/ZenPlayer/ZenPlayer.qrc \
-	C:/MINE/codes/ZenPlayer/addToPlaylistDialog.h \
 	C:/MINE/codes/ZenPlayer/build/CMakeFiles/4.4.0-rc3/CMakeCXXCompiler.cmake \
 	C:/MINE/codes/ZenPlayer/build/CMakeFiles/4.4.0-rc3/CMakeRCCompiler.cmake \
 	C:/MINE/codes/ZenPlayer/build/CMakeFiles/4.4.0-rc3/CMakeSystem.cmake \
 	C:/MINE/codes/ZenPlayer/createPlaylistDialog.h \
 	C:/MINE/codes/ZenPlayer/json.hpp \
 	C:/MINE/codes/ZenPlayer/main.cpp \
-	C:/MINE/codes/ZenPlayer/removeDialog.h \
 	C:/Program\ Files\ (x86)/Windows\ Kits/10/include/10.0.22621.0/ucrt/assert.h \
 	C:/Program\ Files\ (x86)/Windows\ Kits/10/include/10.0.22621.0/ucrt/corecrt.h \
 	C:/Program\ Files\ (x86)/Windows\ Kits/10/include/10.0.22621.0/ucrt/corecrt_malloc.h \
@@ -120,6 +118,7 @@ ZenPlayer_autogen/timestamp: \
 	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/VC/Tools/MSVC/14.43.34808/include/version \
 	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/VC/Tools/MSVC/14.43.34808/include/yvals.h \
 	C:/Program\ Files/Microsoft\ Visual\ Studio/2022/Enterprise/VC/Tools/MSVC/14.43.34808/include/yvals_core.h \
+	C:/Qt/6.11.1/msvc2022_64/include/QtCore/QPoint \
 	C:/Qt/6.11.1/msvc2022_64/include/QtCore/q17memory.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtCore/q20bit.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtCore/q20functional.h \
@@ -312,6 +311,7 @@ ZenPlayer_autogen/timestamp: \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/QFileDialog \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/QListWidgetItem \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/QMainWindow \
+	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/QMenu \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/qabstractitemdelegate.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/qabstractitemview.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/qabstractscrollarea.h \
@@ -324,6 +324,7 @@ ZenPlayer_autogen/timestamp: \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/qlistview.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/qlistwidget.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/qmainwindow.h \
+	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/qmenu.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/qrubberband.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/qsizepolicy.h \
 	C:/Qt/6.11.1/msvc2022_64/include/QtWidgets/qslider.h \
@@ -632,7 +633,5 @@ ZenPlayer_autogen/timestamp: \
 	C:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsVersionlessTargets.cmake \
 	c:/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6/qt.toolchain.cmake \
 	C:/MINE/codes/ZenPlayer/ZenPlayer.ui \
-	C:/MINE/codes/ZenPlayer/addToPlaylistDialog.ui \
 	C:/MINE/codes/ZenPlayer/createPlaylistDialog.ui \
-	C:/MINE/codes/ZenPlayer/removeDialog.ui \
 	C:/Program\ Files/CMake/bin/cmake.exe

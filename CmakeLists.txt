@@ -16,12 +16,8 @@ qt_add_executable(ZenPlayer
     ZenPlayer.h
     ZenPlayer.ui
     ZenPlayer.qrc
-    removeDialog.h
-    removeDialog.ui
     createPlaylistDialog.h
     createPlaylistDialog.ui
-    addToPlaylistDialog.h
-    addToPlaylistDialog.ui
 )
 
 target_link_libraries(ZenPlayer PRIVATE

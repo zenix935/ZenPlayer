@@ -426,21 +426,9 @@
 			null
 		],
 		[
-			"C:/MINE/codes/ZenPlayer/addToPlaylistDialog.h",
-			"MU",
-			"EWIEGA46WW/moc_addToPlaylistDialog.cpp",
-			null
-		],
-		[
 			"C:/MINE/codes/ZenPlayer/createPlaylistDialog.h",
 			"MU",
 			"EWIEGA46WW/moc_createPlaylistDialog.cpp",
-			null
-		],
-		[
-			"C:/MINE/codes/ZenPlayer/removeDialog.h",
-			"MU",
-			"EWIEGA46WW/moc_removeDialog.cpp",
 			null
 		]
 	],
