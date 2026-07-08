@@ -8,7 +8,7 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     isFolder=true;
     pause=true;
     ui->setupUi(this);
-	setWindowIcon(QIcon(":/pics/pics/Icon2.png"));
+	setWindowIcon(QIcon(":/pics/pics/icon.png"));
     loadData();
 
     // Enable custom context menus
@@ -170,6 +170,7 @@ void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
 	QString folderpath=folderPaths.at(index);
 	QDir directory(folderpath);
 	QStringList musicFiles=directory.entryList(QStringList()<<"*.mp3"<<"*.wav"<<"*.flac",QDir::Files);
+    trackPaths.clear();
 	for(const auto& file:musicFiles)
 	{
 		QString fullPath=folderpath+'/'+file;
@@ -182,9 +183,10 @@ void ZenPlayer::showFoldersContextMenu(const QPoint &pos)
 {
     QListWidgetItem* item=ui->foldersListWidget->itemAt(pos);
     if (!item) return;
+    ui->foldersListWidget->setCurrentItem(item);
     QMenu menu(this);
     QAction* removeAction=menu.addAction("Remove Folder");
-    QAction* selectedAction=menu.exec(ui->foldersListWidget->mapToGlobal(pos));
+    QAction* selectedAction=menu.exec(QCursor::pos());
     if (selectedAction==removeAction)
     {
         int index=ui->foldersListWidget->row(item);
@@ -233,11 +235,11 @@ void ZenPlayer::showPlaylistsContextMenu(const QPoint &pos)
 {
     QListWidgetItem* item=ui->playlistListWidget->itemAt(pos);
     if (!item) return;
-
+    ui->playlistListWidget->setCurrentItem(item);
     QMenu menu(this);
     QAction* removeAction=menu.addAction("Remove Playlist");
 
-    QAction* selectedAction=menu.exec(ui->playlistListWidget->mapToGlobal(pos));
+    QAction* selectedAction=menu.exec(QCursor::pos());
     if (selectedAction==removeAction)
     {
         auto& playlists=data["playlists"];
@@ -263,7 +265,7 @@ void ZenPlayer::showTracksContextMenu(const QPoint &pos)
 {
     QListWidgetItem* item=ui->tracksListWidget->itemAt(pos);
     if (!item) return;
-
+    ui->tracksListWidget->setCurrentItem(item);
     QMenu menu(this);
     if (isFolder)
     {
@@ -276,7 +278,7 @@ void ZenPlayer::showTracksContextMenu(const QPoint &pos)
             playlistActions.append(action);
         }
 
-        QAction* selectedAction=menu.exec(ui->tracksListWidget->mapToGlobal(pos));
+        QAction* selectedAction=menu.exec(QCursor::pos());
         if (selectedAction)
         {
             int playlistIndex=playlistActions.indexOf(selectedAction);
@@ -293,7 +295,7 @@ void ZenPlayer::showTracksContextMenu(const QPoint &pos)
     else
     {
         QAction* removeAction=menu.addAction("Remove Track");
-        QAction* selectedAction=menu.exec(ui->tracksListWidget->mapToGlobal(pos));
+        QAction* selectedAction=menu.exec(QCursor::pos());
         if (selectedAction==removeAction)
         {
             int index=ui->tracksListWidget->row(item);

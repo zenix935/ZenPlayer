@@ -5,6 +5,7 @@
 #include <QListWidgetItem>
 #include <QMenu>
 #include <QPoint>
+#include <QCursor>
 #include <fstream>
 #include "json.hpp"
 #include "ui_ZenPlayer.h"

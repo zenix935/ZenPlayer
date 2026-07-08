@@ -1,20 +1,13 @@
 {
     "folders": [
         "C:/Users/nosoo/Music/test",
-        "C:/MINE/music",
-        ""
+        "C:/MINE/music"
     ],
     "playlists": [
         {
             "name": "pp",
             "tracks": [
                 "C:/MINE/music/Alireza Ghorbani - Parishani.mp3"
-            ]
-        },
-        {
-            "name": "p",
-            "tracks": [
-                "C:/Users/nosoo/Music/test/Gdaal - Perc (feat. Aneea).mp3"
             ]
         },
         {
