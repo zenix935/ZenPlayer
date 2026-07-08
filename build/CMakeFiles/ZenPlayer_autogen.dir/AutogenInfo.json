@@ -469,6 +469,7 @@
 	],
 	"MOC_INCLUDES" : 
 	[
+		"C:/MINE/codes/ZenPlayer/utils",
 		"C:/Qt/6.11.1/msvc2022_64/include/QtCore",
 		"C:/Qt/6.11.1/msvc2022_64/include",
 		"C:/Qt/6.11.1/msvc2022_64/mkspecs/win32-msvc",

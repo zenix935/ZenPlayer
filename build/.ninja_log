@@ -1,9 +1,9 @@
 # ninja log v6
-38	487	8051688463970938	ZenPlayer_autogen/timestamp	163cc698e3b6d1e9
-38	487	8051688463970938	ZenPlayer_autogen/mocs_compilation.cpp	163cc698e3b6d1e9
-489	3461	8051688464601707	CMakeFiles/ZenPlayer.dir/ZenPlayer_autogen/mocs_compilation.cpp.obj	7178ee3c6a515d43
-38	487	8051688463970938	C:/MINE/codes/ZenPlayer/build/ZenPlayer_autogen/timestamp	163cc698e3b6d1e9
-38	487	8051688463970938	C:/MINE/codes/ZenPlayer/build/ZenPlayer_autogen/mocs_compilation.cpp	163cc698e3b6d1e9
-493	3499	8051688464643461	CMakeFiles/ZenPlayer.dir/main.cpp.obj	566a930264f58fcd
-497	3572	8051688464681894	CMakeFiles/ZenPlayer.dir/ZenPlayer.cpp.obj	12fe3ba110cf4038
-3572	3832	8051688495432006	ZenPlayer.exe	f594fe9afbbd01bf
+68	498	8051728470766074	ZenPlayer_autogen/timestamp	163cc698e3b6d1e9
+68	498	8051728470766074	ZenPlayer_autogen/mocs_compilation.cpp	163cc698e3b6d1e9
+500	2932	8051728471326686	CMakeFiles/ZenPlayer.dir/ZenPlayer_autogen/mocs_compilation.cpp.obj	6a52ec05096fb8c6
+68	498	8051728470766074	C:/MINE/codes/ZenPlayer/build/ZenPlayer_autogen/timestamp	163cc698e3b6d1e9
+68	498	8051728470766074	C:/MINE/codes/ZenPlayer/build/ZenPlayer_autogen/mocs_compilation.cpp	163cc698e3b6d1e9
+503	3133	8051728471357855	CMakeFiles/ZenPlayer.dir/main.cpp.obj	502bbcf71122cbe
+507	3200	8051728471393317	CMakeFiles/ZenPlayer.dir/ZenPlayer.cpp.obj	a6515528df45c842
+3200	3397	8051728498325474	ZenPlayer.exe	f594fe9afbbd01bf
