@@ -275,3 +275,5 @@ void ZenPlayer::on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item)
 		}
     }
 }
+
+

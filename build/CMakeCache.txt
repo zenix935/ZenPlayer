@@ -159,12 +159,6 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
 //Path to a program.
 CMAKE_MT:FILEPATH=C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64/mt.exe
 
-//Semicolon-separated list of installation prefixes searched by
-// find_package(), find_program(), find_library(), find_file(),
-// and find_path(). Empty by default; intended to be set by the
-// project or the user.
-CMAKE_PREFIX_PATH:STRING=C:/Qt/6.11.1/msvc2022_64
-
 //Value Computed by CMake
 CMAKE_PROJECT_COMPAT_VERSION:STATIC=
 
