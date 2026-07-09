@@ -35,6 +35,9 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     //Connect QMediaPlayer signals
     connect(player, &QMediaPlayer::metaDataChanged, this, &ZenPlayer::handleMetadataChanged);
     connect(player, &QMediaPlayer::mediaStatusChanged, this, &ZenPlayer::handleMetadataChanged);
+    connect(player, &QMediaPlayer::positionChanged, this, &ZenPlayer::on_positionChanged);
+    connect(player, &QMediaPlayer::durationChanged, this, &ZenPlayer::on_durationChanged);
+    connect(ui->timeSlider, &QSlider::sliderMoved, this, &ZenPlayer::on_timeSlider_sliderMoved);
 }
 
 ZenPlayer::~ZenPlayer()
@@ -412,7 +415,6 @@ void ZenPlayer::playTrack()
         audioOutput->setVolume(volume/100.0);
     }
 }
-
 void ZenPlayer::handleMetadataChanged()
 {
     QMediaMetaData metadata=player->metaData();
@@ -461,7 +463,6 @@ void ZenPlayer::handleMetadataChanged()
     
     setDefaultTrackPic();
 }
-
 void ZenPlayer::setDefaultTrackPic()
 {
     ui->trackPicLabel->setStyleSheet(
@@ -473,7 +474,6 @@ void ZenPlayer::setDefaultTrackPic()
     );
     ui->trackPicLabel->setPixmap(QPixmap());
 }
-
 QPixmap ZenPlayer::getRoundedPixmap(const QPixmap& src, int radius)
 {
     if (src.isNull()) return src;
@@ -506,6 +506,46 @@ QPixmap ZenPlayer::getRoundedPixmap(const QPixmap& src, int radius)
     painter.end();
 
     return target;
+}
+void ZenPlayer::on_positionChanged(qint64 position)
+{
+    if (!ui->timeSlider->isSliderDown())
+        ui->timeSlider->setValue(position);
+    ui->currentTimeLabel->setText(formatTime(position));
+}
+
+void ZenPlayer::on_durationChanged(qint64 duration)
+{
+    ui->timeSlider->setRange(0, duration);
+    ui->maxTimeLabel->setText(formatTime(duration));
+}
+
+void ZenPlayer::on_timeSlider_sliderMoved(int position)
+{
+    player->setPosition(position);
+    ui->currentTimeLabel->setText(formatTime(position));
+}
+
+QString ZenPlayer::formatTime(qint64 ms)
+{
+    qint64 totalSeconds=ms/1000;
+    qint64 seconds=totalSeconds%60;
+    qint64 minutes=(totalSeconds/60)%60;
+    qint64 hours=totalSeconds/3600;
+
+    if (hours>0)
+    {
+        return QString("%1:%2:%3")
+            .arg(hours, 2, 10, QChar('0'))
+            .arg(minutes, 2, 10, QChar('0'))
+            .arg(seconds, 2, 10, QChar('0'));
+    }
+    else
+    {
+        return QString("%1:%2")
+            .arg(minutes, 2, 10, QChar('0'))
+            .arg(seconds, 2, 10, QChar('0'));
+    }
 }
 
 

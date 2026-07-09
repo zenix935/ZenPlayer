@@ -60,6 +60,9 @@ private slots:
 
    void playTrack();
    void handleMetadataChanged();
+   void on_positionChanged(qint64 position);
+   void on_durationChanged(qint64 duration);
+   void on_timeSlider_sliderMoved(int position);
 
 private:  
    Ui::ZenPlayerClass *ui;
@@ -74,4 +77,5 @@ private:
 
    void setDefaultTrackPic();
    QPixmap getRoundedPixmap(const QPixmap& src, int radius);
+   QString formatTime(qint64 ms);
 };
