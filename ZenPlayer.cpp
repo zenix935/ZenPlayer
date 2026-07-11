@@ -123,42 +123,49 @@ void ZenPlayer::on_nextButton_clicked()
 }
 void ZenPlayer::on_playButton_clicked()
 {
-    QListWidgetItem* currentItem=ui->tracksListWidget->currentItem();
-    if (!currentItem) return;
-
-    int index=ui->tracksListWidget->row(currentItem);
-    if (index<0 || index>=trackPaths.size()) return;
-
-    QString trackpath=trackPaths.at(index);
-    QUrl trackUrl=QUrl::fromLocalFile(trackpath);
-
-    // If the selected track is different from the currently loaded one, play the new one!
-    if (player->source()!=trackUrl)
+    QListWidgetItem* currentItem = ui->tracksListWidget->currentItem();
+    
+    // Check if user is selecting a new track
+    if (currentItem)
     {
-        playTrack();
-        QIcon icon(":/pics/pics/pause.png");
-        ui->playButton->setIcon(icon);
-        ui->playButton->setToolTip("Pause");
-        pause=false;
-        return;
+        int index = ui->tracksListWidget->row(currentItem);
+        if (index >= 0 && index < trackPaths.size())
+        {
+            QString selectedPath = trackPaths.at(index);
+            // If the selected track is different from the currently playing one, play it!
+            if (selectedPath != currentTrackPath)
+            {
+                currentTrackPath = selectedPath;
+                playTrack();
+                QIcon icon(":/pics/pics/pause.png");
+                ui->playButton->setIcon(icon);
+                ui->playButton->setToolTip("Pause");
+                pause = false;
+                return;
+            }
+        }
     }
 
-    if(!pause)
+    // Toggle play/pause for the currently active track path
+    if (!currentTrackPath.isEmpty())
     {
-        QIcon icon(":/pics/pics/play.png");
-        ui->playButton->setIcon(icon);
-        ui->playButton->setToolTip("Play");
-        pause=true;
-        if (player)
-            player->pause();
-    }
-    else
-    {
-        QIcon icon(":/pics/pics/pause.png");
-        ui->playButton->setIcon(icon);
-        ui->playButton->setToolTip("Pause");
-        pause=false;
-        playTrack();
+        if(!pause)
+        {
+            QIcon icon(":/pics/pics/play.png");
+            ui->playButton->setIcon(icon);
+            ui->playButton->setToolTip("Play");
+            pause=true;
+            if (player)
+                player->pause();
+        }
+        else
+        {
+            QIcon icon(":/pics/pics/pause.png");
+            ui->playButton->setIcon(icon);
+            ui->playButton->setToolTip("Pause");
+            pause=false;
+            playTrack();
+        }
     }
 }
 
@@ -400,19 +407,13 @@ void ZenPlayer::playTrack()
 {
     if (!player) return;
 
-    QListWidgetItem* currentItem=ui->tracksListWidget->currentItem();
-    if (!currentItem) return;
-
-    int index=ui->tracksListWidget->row(currentItem);
-    if (index>=0 && index<trackPaths.size())
+    if (!currentTrackPath.isEmpty())
     {
-        QString trackpath=trackPaths.at(index);
-        QUrl trackUrl=QUrl::fromLocalFile(trackpath);
+        QUrl trackUrl=QUrl::fromLocalFile(currentTrackPath);
         
         if (player->source()!=trackUrl)
             player->setSource(trackUrl);
         player->play();
-        audioOutput->setVolume(volume/100.0);
     }
 }
 void ZenPlayer::handleMetadataChanged()

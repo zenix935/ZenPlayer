@@ -74,6 +74,7 @@ private:
    QList<QString> folderPaths;
    QList<QString> trackPaths;
    QList<QString> playQueue;
+   QString currentTrackPath;
 
    void setDefaultTrackPic();
    QPixmap getRoundedPixmap(const QPixmap& src, int radius);
