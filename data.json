@@ -1,4 +1,7 @@
 {
+    "activeFolderRow": -1,
+    "activePlaylistRow": 1,
+    "activeTab": 1,
     "folders": [
         "C:/Users/nosoo/Music/test",
         "C:/MINE/music"
@@ -18,5 +21,10 @@
             ]
         }
     ],
+    "queue": [
+        "C:/Users/nosoo/Music/test/Gdaal - Perc (feat. Aneea).mp3",
+        "C:/MINE/music/4chaos - Dota.mp3"
+    ],
+    "queueIndex": 0,
     "volume": "50"
 }

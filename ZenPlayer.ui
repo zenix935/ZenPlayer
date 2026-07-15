@@ -328,7 +328,7 @@ height: 35px;</string>
           <item>
            <widget class="QPushButton" name="playButton">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="cursor">
              <cursorShape>PointingHandCursor</cursorShape>
