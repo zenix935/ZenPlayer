@@ -8,6 +8,7 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     isFolder=true;
     pause=true;
     currentQueueIndex=-1;
+    volume=50;
     ui->setupUi(this);
 	setWindowIcon(QIcon(":/pics/pics/icon.png"));
 
@@ -256,81 +257,64 @@ void ZenPlayer::loadData()
     std::ifstream file(dataJsonPath.toStdString());
     if(file.is_open())
     {
-		file>>data;
-		file.close();
+        try {
+            file>>data;
+            file.close();
 
-        std::string tempVolume=data["volume"];
-        volume=std::stoi(tempVolume);
-        ui->volumeLabel->setText(QString::number(volume));
-        QSignalBlocker blocker(ui->volumeSlider);
-        ui->volumeSlider->setValue(volume);
+            if (data.contains("volume")) {
+                std::string tempVolume=data["volume"];
+                volume=std::stoi(tempVolume);
+            }
+            ui->volumeLabel->setText(QString::number(volume));
+            QSignalBlocker blocker(ui->volumeSlider);
+            ui->volumeSlider->setValue(volume);
 
-		std::vector<std::string> temp=data["folders"];
-		for(const auto& folder:temp)
-		{
-			QString folderpath=QString::fromStdString(folder);
-			folderPaths.append(folderpath);
-			QString foldername=folderpath.section('/',-1);
-			ui->foldersListWidget->addItem(foldername);
-		}
-        
-        if (data.contains("queue") && data["queue"].is_array())
-        {
-            playQueue.clear();
-            for(const auto& track:data["queue"])
-                playQueue.append(QString::fromStdString(track));
-            originalQueue=playQueue;
-        }
-        if (data.contains("queueIndex"))
-        {
-            currentQueueIndex=data["queueIndex"];
-            if (currentQueueIndex>=0 && currentQueueIndex<playQueue.size())
-            {
-                currentTrackPath=playQueue.at(currentQueueIndex);
-                updateQueueWidget();
-                if (player)
+            if (data.contains("folders") && data["folders"].is_array()) {
+                std::vector<std::string> temp=data["folders"];
+                for(const auto& folder:temp)
                 {
-                    player->setSource(QUrl::fromLocalFile(currentTrackPath));
-                    handleMetadataChanged();
+                    QString folderpath=QString::fromStdString(folder);
+                    folderPaths.append(folderpath);
+                    QString foldername=folderpath.section('/',-1);
+                    ui->foldersListWidget->addItem(foldername);
                 }
             }
-        }
-
-        temp.clear();
-        for(const auto& playlist:data["playlists"])
-        {
-			temp.push_back(playlist["name"]);
-			QString playlistname=QString::fromStdString(playlist["name"]);
-			ui->playlistListWidget->addItem(playlistname);
-        }
-
-        // Restore active folder/playlist and set lists
-        if (data.contains("activeTab"))
-        {
-            int tab=data["activeTab"];
-            ui->tabWidget->setCurrentIndex(tab);
-            if (tab==0 && data.contains("activeFolderRow"))
+            
+            if (data.contains("queue") && data["queue"].is_array())
             {
-                int row=data["activeFolderRow"];
-                if (row>=0 && row<ui->foldersListWidget->count())
+                playQueue.clear();
+                for(const auto& track:data["queue"])
+                    playQueue.append(QString::fromStdString(track));
+                originalQueue=playQueue;
+            }
+            if (data.contains("queueIndex"))
+            {
+                currentQueueIndex=data["queueIndex"];
+                if (currentQueueIndex>=0 && currentQueueIndex<playQueue.size())
                 {
-                    ui->foldersListWidget->setCurrentRow(row);
-                    on_foldersListWidget_itemClicked(ui->foldersListWidget->item(row));
+                    currentTrackPath=playQueue.at(currentQueueIndex);
+                    updateQueueWidget();
+                    if (player)
+                    {
+                        player->setSource(QUrl::fromLocalFile(currentTrackPath));
+                        handleMetadataChanged();
+                    }
                 }
             }
-            else if (tab==1 && data.contains("activePlaylistRow"))
-            {
-                int row=data["activePlaylistRow"];
-                if (row>=0 && row<ui->playlistListWidget->count())
+
+            if (data.contains("playlists") && data["playlists"].is_array()) {
+                for(const auto& playlist:data["playlists"])
                 {
-                    ui->playlistListWidget->setCurrentRow(row);
-                    on_playlistListWidget_itemClicked(ui->playlistListWidget->item(row));
+                    QString playlistname=QString::fromStdString(playlist["name"]);
+                    ui->playlistListWidget->addItem(playlistname);
                 }
             }
+        } catch (...) {
+            qDebug() << "Error parsing data.json";
         }
 	}
 	else
-		qDebug()<<"There was a problem in loading data";
+		qDebug()<<"No existing configuration found (normal for first run)";
 }
 
 //folders functions
