@@ -18,6 +18,11 @@ qt_add_executable(ZenPlayer
     ZenPlayer.qrc
     createPlaylistDialog.h
     createPlaylistDialog.ui
+    resource.rc
+)
+
+set_target_properties(ZenPlayer PROPERTIES
+    WIN32_EXECUTABLE ON
 )
 
 target_link_libraries(ZenPlayer PRIVATE
