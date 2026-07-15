@@ -19,8 +19,11 @@
 *.ilk
 
 build/
-
-graphify-out/
+release_dist/
+build_vs.bat
+deploy.bat
+*.json
+!data.json
 
 CMakeCache.txt
 

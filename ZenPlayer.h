@@ -1,3 +1,5 @@
+#include <QStandardPaths>
+#include <QDir>
 #include <QMainWindow>
 #include <QApplication>
 #include <QFileDialog>

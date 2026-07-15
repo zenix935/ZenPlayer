@@ -239,7 +239,11 @@ void ZenPlayer::saveData()
         data["activePlaylistRow"]=ui->playlistListWidget->currentRow();
     }
 
-	std::ofstream file("data.json");
+    QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir().mkpath(appDataPath);
+    QString dataJsonPath = appDataPath + "/data.json";
+
+	std::ofstream file(dataJsonPath.toStdString());
     if(file.is_open())
         file<<data.dump(4);
     else
@@ -247,7 +251,9 @@ void ZenPlayer::saveData()
 }
 void ZenPlayer::loadData()
 {
-    std::ifstream file("data.json");
+    QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QString dataJsonPath = appDataPath + "/data.json";
+    std::ifstream file(dataJsonPath.toStdString());
     if(file.is_open())
     {
 		file>>data;
