@@ -59,6 +59,7 @@ void ZenPlayer::on_muteButton_clicked()
         ui->muteButton->setIcon(icon);
         ui->muteButton->setToolTip("Unmute");
         mute=true;
+
         ui->volumeSlider->setEnabled(false);
         if (audioOutput)
             audioOutput->setMuted(true);
@@ -69,6 +70,7 @@ void ZenPlayer::on_muteButton_clicked()
         ui->muteButton->setIcon(icon);
         ui->muteButton->setToolTip("Mute");
         mute=false;
+
         ui->volumeSlider->setEnabled(true);
         if (audioOutput)
             audioOutput->setMuted(false);
@@ -145,24 +147,22 @@ void ZenPlayer::on_shuffleButton_clicked()
 }
 void ZenPlayer::on_previousButton_clicked()
 {
-    if (playQueue.isEmpty()) return;
+    if (playQueue.isEmpty()) 
+        return;
 
     int prevIndex=currentQueueIndex-1;
     if (prevIndex<0)
-    {
         prevIndex=playQueue.size()-1;
-    }
     playTrackAtIndex(prevIndex);
 }
 void ZenPlayer::on_nextButton_clicked()
 {
-    if (playQueue.isEmpty()) return;
+    if (playQueue.isEmpty())
+        return;
 
     int nextIndex=currentQueueIndex+1;
     if (nextIndex>=playQueue.size())
-    {
         nextIndex=0;
-    }
     playTrackAtIndex(nextIndex);
 }
 void ZenPlayer::on_playButton_clicked()
@@ -231,11 +231,13 @@ void ZenPlayer::loadData()
     {
 		file>>data;
 		file.close();
+
         std::string tempVolume=data["volume"];
         volume=std::stoi(tempVolume);
         ui->volumeLabel->setText(QString::number(volume));
         QSignalBlocker blocker(ui->volumeSlider);
         ui->volumeSlider->setValue(volume);
+
 		std::vector<std::string> temp=data["folders"];
 		for(const auto& folder:temp)
 		{
@@ -271,6 +273,7 @@ void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
 	QString folderpath=folderPaths.at(index);
 	QDir directory(folderpath);
 	QStringList musicFiles=directory.entryList(QStringList()<<"*.mp3"<<"*.wav"<<"*.flac",QDir::Files);
+
     trackPaths.clear();
 	for(const auto& file:musicFiles)
 	{
@@ -283,13 +286,14 @@ void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
 		QFileInfo fileInfo(file);
 		ui->tracksListWidget->addItem(fileInfo.completeBaseName());
 	}
-    buildQueueFromCurrentTracks();
 }
 void ZenPlayer::showFoldersContextMenu(const QPoint &pos)
 {
     QListWidgetItem* item=ui->foldersListWidget->itemAt(pos);
-    if (!item) return;
+    if (!item) 
+        return;
     ui->foldersListWidget->setCurrentItem(item);
+
     QMenu menu(this);
     QAction* removeAction=menu.addAction("Remove Folder");
     QAction* selectedAction=menu.exec(QCursor::pos());
@@ -315,6 +319,7 @@ void ZenPlayer::on_addPlaylistButton_clicked()
         newPlaylist["name"]=d.getPlaylistName().toStdString();
         newPlaylist["tracks"]=json::array();
         data["playlists"].push_back(newPlaylist);
+
         ui->playlistListWidget->clear();
         for(const auto& playlist:data["playlists"])
         {
@@ -337,7 +342,6 @@ void ZenPlayer::on_playlistListWidget_itemClicked(QListWidgetItem* item)
 		QFileInfo fileInfo(trackname);
 		ui->tracksListWidget->addItem(fileInfo.completeBaseName());
 	}
-    buildQueueFromCurrentTracks();
 }
 void ZenPlayer::showPlaylistsContextMenu(const QPoint &pos)
 {
@@ -368,6 +372,8 @@ void ZenPlayer::on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item)
     int index=ui->tracksListWidget->row(item);
     if (index>=0 && index<trackPaths.size())
     {
+        buildQueueFromCurrentTracks();
+        
         currentTrackPath=trackPaths.at(index);
         currentQueueIndex=playQueue.indexOf(currentTrackPath);
         playTrack();
@@ -377,13 +383,13 @@ void ZenPlayer::on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item)
         ui->playButton->setIcon(icon);
         ui->playButton->setToolTip("Pause");
         pause=false;
-        ui->playButton->setEnabled(true);
     }
 }
 void ZenPlayer::showTracksContextMenu(const QPoint &pos)
 {
     QListWidgetItem* item=ui->tracksListWidget->itemAt(pos);
-    if (!item) return;
+    if (!item) 
+        return;
     ui->tracksListWidget->setCurrentItem(item);
     QMenu menu(this);
     if (isFolder)
@@ -464,7 +470,6 @@ void ZenPlayer::playTrack()
     if (!currentTrackPath.isEmpty())
     {
         QUrl trackUrl=QUrl::fromLocalFile(currentTrackPath);
-        
         if (player->source()!=trackUrl)
             player->setSource(trackUrl);
         player->play();
@@ -488,9 +493,7 @@ void ZenPlayer::handleMetadataChanged()
         artist=metadata.value(QMediaMetaData::ContributingArtist).toString();
 
     if (title.isEmpty())
-    {
         title=QFileInfo(player->source().toLocalFile()).completeBaseName();
-    }
     
     QString displayText=title;
     if (!artist.isEmpty())
@@ -621,13 +624,11 @@ void ZenPlayer::buildQueueFromCurrentTracks()
         std::mt19937 g(rd());
         std::shuffle(playQueue.begin(), playQueue.end(), g);
 
-        if (!activeTrack.isEmpty()) 
+        if (!activeTrack.isEmpty())
         {
             playQueue.prepend(activeTrack);
-            currentQueueIndex=0;
-        } 
-        else
-            currentQueueIndex=-1;
+            currentQueueIndex = 0;
+        }
     }
     else
     {
@@ -664,9 +665,7 @@ void ZenPlayer::updateQueueWidget()
     }
 
     if (currentQueueIndex>=0 && currentQueueIndex<ui->queueListWidget->count())
-    {
         ui->queueListWidget->setCurrentRow(currentQueueIndex);
-    }
 
     bool canNavigate=(playQueue.size()>1);
     ui->nextButton->setEnabled(canNavigate);
