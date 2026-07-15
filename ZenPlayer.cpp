@@ -309,6 +309,31 @@ void ZenPlayer::loadData()
                     ui->playlistListWidget->addItem(playlistname);
                 }
             }
+
+            // Restore active folder/playlist and set lists
+            if (data.contains("activeTab"))
+            {
+                int tab=data["activeTab"];
+                ui->tabWidget->setCurrentIndex(tab);
+                if (tab==0 && data.contains("activeFolderRow"))
+                {
+                    int row=data["activeFolderRow"];
+                    if (row>=0 && row<ui->foldersListWidget->count())
+                    {
+                        ui->foldersListWidget->setCurrentRow(row);
+                        on_foldersListWidget_itemClicked(ui->foldersListWidget->item(row));
+                    }
+                }
+                else if (tab==1 && data.contains("activePlaylistRow"))
+                {
+                    int row=data["activePlaylistRow"];
+                    if (row>=0 && row<ui->playlistListWidget->count())
+                    {
+                        ui->playlistListWidget->setCurrentRow(row);
+                        on_playlistListWidget_itemClicked(ui->playlistListWidget->item(row));
+                    }
+                }
+            }
         } catch (...) {
             qDebug() << "Error parsing data.json";
         }
