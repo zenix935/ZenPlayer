@@ -39,9 +39,6 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     connect(player, &QMediaPlayer::positionChanged, this, &ZenPlayer::on_positionChanged);
     connect(player, &QMediaPlayer::durationChanged, this, &ZenPlayer::on_durationChanged);
     connect(ui->timeSlider, &QSlider::sliderMoved, this, &ZenPlayer::on_timeSlider_sliderMoved);
-
-    //Connect queueListWidget signal
-    connect(ui->tracksListWidget, &QListWidget::itemDoubleClicked, this, &ZenPlayer::on_tracksListWidget_itemDoubleClicked);
 }
 
 ZenPlayer::~ZenPlayer()

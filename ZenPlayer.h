@@ -14,6 +14,8 @@
 #include <QPainterPath>
 #include <QPixmap>
 #include <fstream>
+#include <random>
+#include <algorithm>
 #include "json.hpp"
 #include "ui_ZenPlayer.h"
 #include "createPlaylistDialog.h"
@@ -53,7 +55,7 @@ private slots:
    void on_playlistListWidget_itemClicked(QListWidgetItem* item);
    void showPlaylistsContextMenu(const QPoint &pos);
    
-   void on_tracksListWidget_itemClicked(QListWidgetItem* item);
+   void on_tracksListWidget_itemDoubleClicked(QListWidgetItem* item);
    void showTracksContextMenu(const QPoint &pos);
 
    void on_tabWidget_currentChanged(int index);
@@ -63,6 +65,8 @@ private slots:
    void on_positionChanged(qint64 position);
    void on_durationChanged(qint64 duration);
    void on_timeSlider_sliderMoved(int position);
+   
+   void on_queueListWidget_itemClicked(QListWidgetItem* item);
 
 private:  
    Ui::ZenPlayerClass *ui;
@@ -74,9 +78,14 @@ private:
    QList<QString> folderPaths;
    QList<QString> trackPaths;
    QList<QString> playQueue;
+   QList<QString> originalQueue;
    QString currentTrackPath;
+   int currentQueueIndex;
 
    void setDefaultTrackPic();
    QPixmap getRoundedPixmap(const QPixmap& src, int radius);
    QString formatTime(qint64 ms);
+   void buildQueueFromCurrentTracks();
+   void updateQueueWidget();
+   void playTrackAtIndex(int index);
 };
