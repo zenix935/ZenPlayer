@@ -20,6 +20,8 @@
 
 build/
 
+graphify-out/
+
 CMakeCache.txt
 
 # VS Code configurations (Optional: keep if you want team settings shared)
