@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>714</width>
-    <height>581</height>
+    <width>702</width>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -163,6 +163,18 @@ height: 50px</string>
           </item>
           <item>
            <widget class="QComboBox" name="sortComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
             <item>
              <property name="text">
               <string>A - Z</string>
@@ -170,22 +182,39 @@ height: 50px</string>
             </item>
             <item>
              <property name="text">
-              <string>Artist</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Album</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Realese year</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>Date added</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="orderComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="baseSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <item>
+             <property name="text">
+              <string>Ascending</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Descending</string>
              </property>
             </item>
            </widget>
@@ -213,6 +242,12 @@ height: 50px</string>
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>230</width>
+            <height>200</height>
+           </size>
           </property>
           <property name="text">
            <string/>
@@ -242,6 +277,12 @@ height: 50px</string>
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>230</width>
+            <height>160</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -652,7 +693,7 @@ height: 30px;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>714</width>
+     <width>702</width>
      <height>33</height>
     </rect>
    </property>

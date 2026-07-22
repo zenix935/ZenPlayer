@@ -46,6 +46,8 @@ private slots:
    void on_previousButton_clicked();
    void on_nextButton_clicked();
    void on_playButton_clicked();
+   void on_sortComboBox_currentIndexChanged();
+   void on_orderComboBox_currentIndexChanged();
 
    void saveData();
    void loadData();
@@ -68,6 +70,7 @@ private slots:
    void on_positionChanged(qint64 position);
    void on_durationChanged(qint64 duration);
    void on_timeSlider_sliderMoved(int position);
+   void sortTracks();
    
    void on_queueListWidget_itemClicked(QListWidgetItem* item);
 

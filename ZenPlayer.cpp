@@ -44,6 +44,8 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
 
     //Connect queueListWidget signal
     connect(ui->tracksListWidget, &QListWidget::itemDoubleClicked, this, &ZenPlayer::on_tracksListWidget_itemDoubleClicked);
+    connect(ui->sortComboBox, &QComboBox::currentIndexChanged, this, &ZenPlayer::on_sortComboBox_currentIndexChanged);
+    connect(ui->orderComboBox, &QComboBox::currentIndexChanged, this, &ZenPlayer::on_orderComboBox_currentIndexChanged);
 }
 
 ZenPlayer::~ZenPlayer()
@@ -227,6 +229,8 @@ void ZenPlayer::saveData()
 
     // Save active folder/playlist context
     data["activeTab"]=ui->tabWidget->currentIndex();
+    data["sortIndex"]=ui->sortComboBox->currentIndex();
+    data["orderIndex"]=ui->orderComboBox->currentIndex();
     if (ui->tabWidget->currentIndex()==0)
     {
         data["activeFolderRow"]=ui->foldersListWidget->currentRow();
@@ -303,6 +307,16 @@ void ZenPlayer::loadData()
                 }
             }
 
+            if (data.contains("sortIndex"))
+            {
+                QSignalBlocker blocker(ui->sortComboBox);
+                ui->sortComboBox->setCurrentIndex(data["sortIndex"]);
+            }
+            if (data.contains("orderIndex"))
+            {
+                QSignalBlocker blocker(ui->orderComboBox);
+                ui->orderComboBox->setCurrentIndex(data["orderIndex"]);
+            }
             if (data.contains("playlists") && data["playlists"].is_array()) {
                 for(const auto& playlist:data["playlists"])
                 {
@@ -382,6 +396,7 @@ void ZenPlayer::on_foldersListWidget_itemClicked(QListWidgetItem* item)
 		QFileInfo fileInfo(file);
 		ui->tracksListWidget->addItem(fileInfo.completeBaseName());
 	}
+	sortTracks();
 }
 void ZenPlayer::showFoldersContextMenu(const QPoint &pos)
 {
@@ -460,6 +475,7 @@ void ZenPlayer::on_playlistListWidget_itemClicked(QListWidgetItem* item)
 		QFileInfo fileInfo(trackname);
 		ui->tracksListWidget->addItem(fileInfo.completeBaseName());
 	}
+	sortTracks();
 }
 void ZenPlayer::showPlaylistsContextMenu(const QPoint &pos)
 {
@@ -704,6 +720,48 @@ void ZenPlayer::on_timeSlider_sliderMoved(int position)
 {
     player->setPosition(position);
     ui->currentTimeLabel->setText(formatTime(position));
+}
+void ZenPlayer::on_sortComboBox_currentIndexChanged()
+{
+    sortTracks();
+}
+void ZenPlayer::on_orderComboBox_currentIndexChanged()
+{
+    sortTracks();
+}
+
+void ZenPlayer::sortTracks()
+{
+    int index=ui->sortComboBox->currentIndex();
+    int Oindex=ui->orderComboBox->currentIndex();
+    if (index<0 || trackPaths.isEmpty())
+        return;
+
+    QList<QPair<QString, QString>> pairs; // <sortKey, trackPath>
+    for (const auto &path : trackPaths)
+    {
+        QString key;
+        QFileInfo fi(path);
+        if (index==0) // A-Z (Title)
+            key=fi.completeBaseName();
+        else if (index==1) // Date added (File modification time)
+            key=fi.lastModified().toString(Qt::ISODateWithMs);
+        pairs.append({key.toLower(), path});
+    }
+
+    if(Oindex==0)
+        std::sort(pairs.begin(), pairs.end(), [](const QPair<QString, QString> &a, const QPair<QString, QString> &b) {return a.first<b.first;});
+    else if(Oindex==1)
+        std::sort(pairs.begin(), pairs.end(), [](const QPair<QString, QString> &a, const QPair<QString, QString> &b) {return a.first>b.first;});
+
+    trackPaths.clear();
+    ui->tracksListWidget->clear();
+    for (const auto &p : pairs)
+    {
+        trackPaths.append(p.second);
+        QFileInfo fi(p.second);
+        ui->tracksListWidget->addItem(fi.completeBaseName());
+    }
 }
 QString ZenPlayer::formatTime(qint64 ms)
 {
