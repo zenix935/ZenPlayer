@@ -14,10 +14,10 @@
    <string>ZenPlayer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
-      <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
        <widget class="QTabWidget" name="tabWidget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -144,17 +144,67 @@ height: 50px</string>
         </widget>
        </widget>
       </item>
-      <item>
-       <widget class="QListWidget" name="tracksListWidget">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
+      <item row="0" column="1">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="sortLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Sort by:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="sortComboBox">
+            <item>
+             <property name="text">
+              <string>A - Z</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Artist</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Album</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Realese year</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Date added</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QListWidget" name="tracksListWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item>
+      <item row="0" column="2">
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QLabel" name="trackPicLabel">
@@ -618,9 +668,6 @@ height: 30px;</string>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="ZenPlayer.qrc"/>
- </resources>
  <customwidgets>
   <customwidget>
    <class>ClickableSlider</class>
@@ -628,5 +675,8 @@ height: 30px;</string>
    <header>ClickableSlider.h</header>
   </customwidget>
  </customwidgets>
+ <resources>
+  <include location="ZenPlayer.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -346,6 +346,15 @@ void ZenPlayer::loadData()
 void ZenPlayer::on_addFolderButton_clicked()
 {
     QString folderpath=QFileDialog::getExistingDirectory(this,"Select a folder");
+    if (folderpath.isEmpty() || folderPaths.contains(folderpath))
+    {
+        QMessageBox msgBox(this);
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setText("<b>Error:</b> Duplicated folder");
+        msgBox.setInformativeText("You can't add an existing folder");
+        msgBox.exec();
+        return;
+    }
     folderPaths.append(folderpath);
 	QString foldername=folderpath.section('/',-1);
 	ui->foldersListWidget->addItem(foldername);
@@ -397,10 +406,32 @@ void ZenPlayer::on_addPlaylistButton_clicked()
     createPlaylistDialog d;
     if(d.exec()==QDialog::Accepted) 
     {
+        std::string name=d.getPlaylistName().toStdString();
+        if (name.empty())
+        {
+            QMessageBox msgBox(this);
+            msgBox.setIcon(QMessageBox::Critical);
+            msgBox.setText("<b>Error:</b> Empty name");
+            msgBox.setInformativeText("You can't add a playlist with empty name");
+            msgBox.exec();
+            return;
+        }
         if(!data.contains("playlists")||!data["playlists"].is_array())
             data["playlists"]=json::array();
+        for (const auto& p : data["playlists"]) 
+        {
+            if (p.contains("name") && p["name"] == name)
+            {
+                QMessageBox msgBox(this);
+                msgBox.setIcon(QMessageBox::Critical);
+                msgBox.setText("<b>Error:</b> Duplicated playlist");
+                msgBox.setInformativeText("You can't add an existing playlist");
+                msgBox.exec();
+                return;
+            }
+        }
         json newPlaylist;
-        newPlaylist["name"]=d.getPlaylistName().toStdString();
+        newPlaylist["name"]=name;
         newPlaylist["tracks"]=json::array();
         data["playlists"].push_back(newPlaylist);
 
