@@ -115,7 +115,7 @@ void ZenPlayer::on_shuffleButton_clicked()
 
         if (!playQueue.isEmpty())
         {
-            QString activeTrack = currentTrackPath;
+            QString activeTrack=currentTrackPath;
             playQueue.removeAll(activeTrack);
 
             std::random_device rd;
@@ -151,7 +151,6 @@ void ZenPlayer::on_previousButton_clicked()
 {
     if (playQueue.isEmpty()) 
         return;
-
     int prevIndex=currentQueueIndex-1;
     if (prevIndex<0)
         prevIndex=playQueue.size()-1;
@@ -161,7 +160,6 @@ void ZenPlayer::on_nextButton_clicked()
 {
     if (playQueue.isEmpty())
         return;
-
     int nextIndex=currentQueueIndex+1;
     if (nextIndex>=playQueue.size())
         nextIndex=0;
@@ -240,9 +238,9 @@ void ZenPlayer::saveData()
         data["activePlaylistRow"]=ui->playlistListWidget->currentRow();
     }
 
-    QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QString appDataPath=QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir().mkpath(appDataPath);
-    QString dataJsonPath = appDataPath + "/data.json";
+    QString dataJsonPath=appDataPath+"/data.json";
 
 	std::ofstream file(dataJsonPath.toStdString());
     if(file.is_open())
@@ -252,16 +250,18 @@ void ZenPlayer::saveData()
 }
 void ZenPlayer::loadData()
 {
-    QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QString dataJsonPath = appDataPath + "/data.json";
+    QString appDataPath=QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QString dataJsonPath=appDataPath+"/data.json";
     std::ifstream file(dataJsonPath.toStdString());
     if(file.is_open())
     {
-        try {
+        try 
+        {
             file>>data;
             file.close();
 
-            if (data.contains("volume")) {
+            if (data.contains("volume")) 
+            {
                 std::string tempVolume=data["volume"];
                 volume=std::stoi(tempVolume);
             }
@@ -269,7 +269,8 @@ void ZenPlayer::loadData()
             QSignalBlocker blocker(ui->volumeSlider);
             ui->volumeSlider->setValue(volume);
 
-            if (data.contains("folders") && data["folders"].is_array()) {
+            if (data.contains("folders") && data["folders"].is_array()) 
+            {
                 std::vector<std::string> temp=data["folders"];
                 for(const auto& folder:temp)
                 {
@@ -334,7 +335,9 @@ void ZenPlayer::loadData()
                     }
                 }
             }
-        } catch (...) {
+        } 
+        catch (...) 
+        {
             qDebug() << "Error parsing data.json";
         }
 	}
@@ -461,7 +464,8 @@ void ZenPlayer::on_playlistListWidget_itemClicked(QListWidgetItem* item)
 void ZenPlayer::showPlaylistsContextMenu(const QPoint &pos)
 {
     QListWidgetItem* item=ui->playlistListWidget->itemAt(pos);
-    if (!item) return;
+    if (!item) 
+        return;
     ui->playlistListWidget->setCurrentItem(item);
     QMenu menu(this);
     QAction* removeAction=menu.addAction("Remove Playlist");
@@ -644,7 +648,8 @@ void ZenPlayer::handleMetadataChanged()
 void ZenPlayer::setDefaultTrackPic()
 {
     ui->trackPicLabel->setStyleSheet(
-        "QLabel {"
+        "QLabel "
+        "{"
         "  border: 2px #555555;"
         "  border-radius: 15px;"
         "  background-color: #2b2b2b;"
@@ -656,11 +661,9 @@ QPixmap ZenPlayer::getRoundedPixmap(const QPixmap& src, int radius)
 {
     if (src.isNull()) 
         return src;
-
     QSize labelSize=ui->trackPicLabel->size();
     if (labelSize.width()<=0 || labelSize.height()<=0)
         labelSize=QSize(200, 200);
-
     QPixmap scaledSrc=src.scaled(labelSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
     
     QPixmap cropped(labelSize);
@@ -742,7 +745,7 @@ void ZenPlayer::buildQueueFromCurrentTracks()
         if (!activeTrack.isEmpty())
         {
             playQueue.prepend(activeTrack);
-            currentQueueIndex = 0;
+            currentQueueIndex=0;
         }
     }
     else
