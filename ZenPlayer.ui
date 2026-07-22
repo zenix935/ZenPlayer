@@ -478,7 +478,7 @@ height: 30px;</string>
            </widget>
           </item>
           <item>
-           <widget class="QSlider" name="timeSlider">
+           <widget class="ClickableSlider" name="timeSlider">
             <property name="minimum">
              <number>1</number>
             </property>
@@ -563,7 +563,7 @@ height: 30px;</string>
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="volumeSlider">
+         <widget class="ClickableSlider" name="volumeSlider">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -621,5 +621,12 @@ height: 30px;</string>
  <resources>
   <include location="ZenPlayer.qrc"/>
  </resources>
+ <customwidgets>
+  <customwidget>
+   <class>ClickableSlider</class>
+   <extends>QSlider</extends>
+   <header>ClickableSlider.h</header>
+  </customwidget>
+ </customwidgets>
  <connections/>
 </ui>
