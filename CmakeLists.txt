@@ -16,6 +16,7 @@ qt_add_executable(ZenPlayer
     ZenPlayer.h
     ZenPlayer.ui
     ZenPlayer.qrc
+    ClickableSlider.h
     createPlaylistDialog.h
     createPlaylistDialog.ui
     resource.rc
