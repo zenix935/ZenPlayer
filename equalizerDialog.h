@@ -97,7 +97,11 @@ private slots:
 			setSlidersDeactive();
 			setSlidersValue(30, 45, 80, 28, 0, 13, 60, 61, 80);
 			break;
-		case 8: // Custom
+		case 8: // Car
+			setSlidersDeactive();
+			setSlidersValue(80, 48, 30, 1, 0, 7, 40, 48, 70);
+			break;
+		case 9: // Custom
 			setSlidersActive();
 			break;
 		}
