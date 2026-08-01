@@ -96,6 +96,7 @@ private:
    QString currentTrackPath;
    int currentQueueIndex;
    int equalizerPresetIndex=0;
+   std::vector<int> equalizerCustomValues; 
 
    void setDefaultTrackPic();
    QPixmap getRoundedPixmap(const QPixmap& src, int radius);

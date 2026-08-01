@@ -11,6 +11,15 @@ class equalizerDialog : public QDialog
 	Q_OBJECT
 public:
 	Ui::equalizerDialog* ui;
+	std::vector<int> customValues={0, 0, 0, 0, 0, 0, 0, 0, 0};
+	void setCustomValues(const std::vector<int>& values)
+	{
+		if(!values.empty())
+			customValues=values;
+		if(ui->presetComboBox->currentIndex()==9)
+			setSlidersValue(customValues[0], customValues[1], customValues[2], customValues[3], customValues[4], customValues[5], customValues[6], 
+							customValues[7], customValues[8]);
+	}
 	equalizerDialog(QWidget* parent=nullptr, int presetIndex=0) : QDialog(parent), ui(new Ui::equalizerDialog())
 	{
 		ui->setupUi(this);
@@ -23,8 +32,7 @@ public:
 	{
 		delete ui;
 	}
-private:
-	void setSlidersValue(int hz62=0, int hz125=0, int hz250=0, int hz500=0, int hz1k=0, int hz2k=0, int hz4k=0, int hz8k=0, int hz16k=0)
+	void setSlidersValue(int hz62, int hz125, int hz250, int hz500, int hz1k, int hz2k, int hz4k, int hz8k, int hz16k)
 	{
 		ui->hz62Slider->setValue(hz62);
 		ui->hz125Slider->setValue(hz125);
@@ -36,6 +44,7 @@ private:
 		ui->hz8kSlider->setValue(hz8k);
 		ui->hz16kSlider->setValue(hz16k);
 	}
+private:
 	void setSlidersActive()
 	{
 		ui->hz62Slider->setEnabled(true);
@@ -98,7 +107,7 @@ private slots:
 			break;
 		case 6: // Home Stereo
 			setSlidersDeactive();
-			setSlidersValue(60, 41, 40, 17, 20, 17, 40, 41);
+			setSlidersValue(60, 41, 40, 17, 20, 17, 40, 41, 60);
 			ui->presetLabel->setText("Home Stereo");
 			break;
 		case 7: // TV
@@ -113,6 +122,8 @@ private slots:
 			break;
 		case 9: // Custom
 			setSlidersActive();
+			setSlidersValue(customValues[0], customValues[1], customValues[2], customValues[3], customValues[4], customValues[5], customValues[6], 
+							customValues[7], customValues[8]);
 			ui->presetLabel->setText("Custom");
 			break;
 		}

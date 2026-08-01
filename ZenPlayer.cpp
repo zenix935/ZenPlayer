@@ -353,9 +353,23 @@ void ZenPlayer::on_playButton_clicked()
 void ZenPlayer::on_equalizerButton_clicked()
 {
     equalizerDialog d(this,equalizerPresetIndex);
+    d.setCustomValues(equalizerCustomValues);
     if(d.exec()==QDialog::Accepted)
     {
         equalizerPresetIndex=d.ui->presetComboBox->currentIndex();
+        if(equalizerPresetIndex==9)
+        {
+            equalizerCustomValues.clear();
+            equalizerCustomValues.push_back(d.ui->hz62Slider->value());
+            equalizerCustomValues.push_back(d.ui->hz125Slider->value());
+            equalizerCustomValues.push_back(d.ui->hz250Slider->value());
+            equalizerCustomValues.push_back(d.ui->hz500Slider->value());
+            equalizerCustomValues.push_back(d.ui->hz1kSlider->value());
+            equalizerCustomValues.push_back(d.ui->hz2kSlider->value());
+            equalizerCustomValues.push_back(d.ui->hz4kSlider->value());
+            equalizerCustomValues.push_back(d.ui->hz8kSlider->value());
+            equalizerCustomValues.push_back(d.ui->hz16kSlider->value());
+        }
         // Handle equalizer settings
     }
 }
@@ -364,15 +378,19 @@ void ZenPlayer::on_equalizerButton_clicked()
 void ZenPlayer::saveData()
 {
     std::vector<std::string> temp;
-    for(auto& folder:folderPaths)
+    for(const auto& folder:folderPaths)
         temp.push_back(folder.toStdString());
     data["folders"]=temp;
     data["volume"]=std::to_string(volume);
     data["equalizerPresetIndex"]=std::to_string(equalizerPresetIndex);
+    temp.clear();
+    for(const auto &v : equalizerCustomValues)
+        temp.push_back(std::to_string(v));
+    data["equalizerCustomValues"]=temp;
     
     // Save current queue and index
     temp.clear();
-    for(auto& track:playQueue)
+    for(const auto& track:playQueue)
         temp.push_back(track.toStdString());
     data["queue"]=temp;
     data["queueIndex"]=currentQueueIndex;
@@ -426,6 +444,12 @@ void ZenPlayer::loadData()
             {
                 std::string temp=data["equalizerPresetIndex"];
                 equalizerPresetIndex=std::stoi(temp);
+            }
+            if(data.contains("equalizerCustomValues") && data["equalizerCustomValues"].is_array())
+            {
+                equalizerCustomValues.clear();
+                for(const std::string& value:data["equalizerCustomValues"])
+                    equalizerCustomValues.push_back(std::stoi(value));
             }
 
             if (data.contains("folders") && data["folders"].is_array()) 
