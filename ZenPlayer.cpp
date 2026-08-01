@@ -194,7 +194,7 @@ ZenPlayer::~ZenPlayer()
     delete ui;
 }
 
-//sound/volume
+// Sound/volume
 void ZenPlayer::on_muteButton_clicked()
 {
     if(!mute)
@@ -228,7 +228,7 @@ void ZenPlayer::on_volumeSlider_valueChanged(int value)
         audioOutput->setVolume(value/100.0);
 }
 
-//controls
+// Controls
 void ZenPlayer::on_repeatButton_clicked()
 {
 	if(!repeat)
@@ -348,6 +348,15 @@ void ZenPlayer::on_playButton_clicked()
             playTrack();
             updateQueueWidget();
         }
+    }
+}
+void ZenPlayer::on_equalizerButton_clicked()
+{
+    equalizerDialog d;
+    if(d.exec()==QDialog::Accepted)
+    {
+        bool meow=0;
+        // Handle equalizer settings
     }
 }
 

@@ -21,8 +21,9 @@
 #include <algorithm>
 #include "json.hpp"
 #include "ui_ZenPlayer.h"
-#include "TrackItemDelegate.h"
+#include "equalizerDialog.h"
 #include "ListItemDelegate.h"
+#include "TrackItemDelegate.h"
 #include "createPlaylistDialog.h"
 
 using json=nlohmann::json;
@@ -51,6 +52,8 @@ private slots:
    void on_previousButton_clicked();
    void on_nextButton_clicked();
    void on_playButton_clicked();
+   void on_equalizerButton_clicked();
+
    void on_sortComboBox_currentIndexChanged();
    void on_orderComboBox_currentIndexChanged();
 
