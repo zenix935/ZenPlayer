@@ -352,9 +352,10 @@ void ZenPlayer::on_playButton_clicked()
 }
 void ZenPlayer::on_equalizerButton_clicked()
 {
-    equalizerDialog d;
+    equalizerDialog d(this,equalizerPresetIndex);
     if(d.exec()==QDialog::Accepted)
     {
+        equalizerPresetIndex=d.ui->presetComboBox->currentIndex();
         // Handle equalizer settings
     }
 }
@@ -367,6 +368,7 @@ void ZenPlayer::saveData()
         temp.push_back(folder.toStdString());
     data["folders"]=temp;
     data["volume"]=std::to_string(volume);
+    data["equalizerPresetIndex"]=std::to_string(equalizerPresetIndex);
     
     // Save current queue and index
     temp.clear();
@@ -420,6 +422,11 @@ void ZenPlayer::loadData()
             ui->volumeLabel->setText(QString::number(volume));
             QSignalBlocker blocker(ui->volumeSlider);
             ui->volumeSlider->setValue(volume);
+            if(data.contains("equalizerPresetIndex"))
+            {
+                std::string temp=data["equalizerPresetIndex"];
+                equalizerPresetIndex=std::stoi(temp);
+            }
 
             if (data.contains("folders") && data["folders"].is_array()) 
             {

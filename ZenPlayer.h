@@ -95,6 +95,7 @@ private:
    QList<QString> originalQueue;
    QString currentTrackPath;
    int currentQueueIndex;
+   int equalizerPresetIndex=0;
 
    void setDefaultTrackPic();
    QPixmap getRoundedPixmap(const QPixmap& src, int radius);
