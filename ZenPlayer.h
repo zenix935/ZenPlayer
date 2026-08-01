@@ -22,6 +22,7 @@
 #include "json.hpp"
 #include "ui_ZenPlayer.h"
 #include "TrackItemDelegate.h"
+#include "ListItemDelegate.h"
 #include "createPlaylistDialog.h"
 
 using json=nlohmann::json;

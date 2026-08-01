@@ -17,6 +17,7 @@ qt_add_executable(ZenPlayer
     ZenPlayer.cpp
     ZenPlayer.qrc
     ClickableSlider.h
+    ListItemDelegate.h
     TrackItemDelegate.h
     createPlaylistDialog.h
     createPlaylistDialog.ui

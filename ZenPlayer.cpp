@@ -63,6 +63,51 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
             on_tracksListWidget_itemDoubleClicked(item);
         }
     });
+
+    connect(trackDelegate, &TrackItemDelegate::menuClicked, this, [this](const QModelIndex &index) 
+    {
+        QListWidgetItem* item=ui->tracksListWidget->item(index.row());
+        if (item) 
+        {
+            // Pass the center of the item rect so itemAt() resolves correctly
+            QRect visualRect=ui->tracksListWidget->visualRect(index);
+            showTracksContextMenu(visualRect.center());
+        }
+    });
+
+    //Setup custom delegate for playlistListWidget with 3-dot menu on hover
+    ListItemDelegate* playlistDelegate=new ListItemDelegate(ui->playlistListWidget);
+    ui->playlistListWidget->setItemDelegate(playlistDelegate);
+    ui->playlistListWidget->setMouseTracking(true);
+    ui->playlistListWidget->viewport()->setAttribute(Qt::WA_Hover, true);
+    ui->playlistListWidget->viewport()->installEventFilter(this);
+
+    connect(playlistDelegate, &ListItemDelegate::menuClicked, this, [this](const QModelIndex &index) 
+    {
+        QListWidgetItem* item=ui->playlistListWidget->item(index.row());
+        if (item) 
+        {
+            QRect visualRect=ui->playlistListWidget->visualRect(index);
+            showPlaylistsContextMenu(visualRect.center());
+        }
+    });
+
+    //Setup custom delegate for foldersListWidget with 3-dot menu on hover
+    ListItemDelegate* folderDelegate=new ListItemDelegate(ui->foldersListWidget);
+    ui->foldersListWidget->setItemDelegate(folderDelegate);
+    ui->foldersListWidget->setMouseTracking(true);
+    ui->foldersListWidget->viewport()->setAttribute(Qt::WA_Hover, true);
+    ui->foldersListWidget->viewport()->installEventFilter(this);
+
+    connect(folderDelegate, &ListItemDelegate::menuClicked, this, [this](const QModelIndex &index) 
+    {
+        QListWidgetItem* item=ui->foldersListWidget->item(index.row());
+        if (item) 
+        {
+            QRect visualRect=ui->foldersListWidget->visualRect(index);
+            showFoldersContextMenu(visualRect.center());
+        }
+    });
 }
 
 bool ZenPlayer::eventFilter(QObject* watched, QEvent* event)
@@ -81,7 +126,8 @@ bool ZenPlayer::eventFilter(QObject* watched, QEvent* event)
                 int btnHeight=22;
                 int leftPadding=8;
                 QRect btnRect(rect.left()+leftPadding, rect.top()+(rect.height()-btnHeight)/2, btnWidth, btnHeight);
-                if (btnRect.contains(me->pos()))
+                QRect menuRect=TrackItemDelegate::menuBtnRect(rect, ui->tracksListWidget->viewport()->width());
+                if (btnRect.contains(me->pos()) || menuRect.contains(me->pos()))
                     isHand=true;
             }
             ui->tracksListWidget->viewport()->setCursor(isHand ? Qt::PointingHandCursor : Qt::ArrowCursor);
@@ -91,6 +137,52 @@ bool ZenPlayer::eventFilter(QObject* watched, QEvent* event)
         {
             ui->tracksListWidget->viewport()->setCursor(Qt::ArrowCursor);
             ui->tracksListWidget->viewport()->update();
+        }
+    }
+    if (ui && watched==ui->playlistListWidget->viewport()) 
+    {
+        if (event->type()==QEvent::MouseMove || event->type()==QEvent::HoverMove) 
+        {
+            QMouseEvent* me=static_cast<QMouseEvent*>(event);
+            QModelIndex index=ui->playlistListWidget->indexAt(me->pos());
+            bool isHand=false;
+            if (index.isValid()) 
+            {
+                QRect rect=ui->playlistListWidget->visualRect(index);
+                QRect menuRect=ListItemDelegate::menuBtnRect(rect, ui->playlistListWidget->viewport()->width());
+                if (menuRect.contains(me->pos()))
+                    isHand=true;
+            }
+            ui->playlistListWidget->viewport()->setCursor(isHand ? Qt::PointingHandCursor : Qt::ArrowCursor);
+            ui->playlistListWidget->viewport()->update();
+        }
+        else if (event->type()==QEvent::Leave)
+        {
+            ui->playlistListWidget->viewport()->setCursor(Qt::ArrowCursor);
+            ui->playlistListWidget->viewport()->update();
+        }
+    }
+    if (ui && watched==ui->foldersListWidget->viewport()) 
+    {
+        if (event->type()==QEvent::MouseMove || event->type()==QEvent::HoverMove) 
+        {
+            QMouseEvent* me=static_cast<QMouseEvent*>(event);
+            QModelIndex index=ui->foldersListWidget->indexAt(me->pos());
+            bool isHand=false;
+            if (index.isValid()) 
+            {
+                QRect rect=ui->foldersListWidget->visualRect(index);
+                QRect menuRect=ListItemDelegate::menuBtnRect(rect, ui->foldersListWidget->viewport()->width());
+                if (menuRect.contains(me->pos()))
+                    isHand=true;
+            }
+            ui->foldersListWidget->viewport()->setCursor(isHand ? Qt::PointingHandCursor : Qt::ArrowCursor);
+            ui->foldersListWidget->viewport()->update();
+        }
+        else if (event->type()==QEvent::Leave)
+        {
+            ui->foldersListWidget->viewport()->setCursor(Qt::ArrowCursor);
+            ui->foldersListWidget->viewport()->update();
         }
     }
     return QMainWindow::eventFilter(watched, event);
@@ -653,8 +745,7 @@ void ZenPlayer::playTrack()
     if (!currentTrackPath.isEmpty())
     {
         QUrl trackUrl=QUrl::fromLocalFile(currentTrackPath);
-        if (player->source()!=trackUrl)
-            player->setSource(trackUrl);
+        player->setSource(trackUrl);
         player->play();
     }
 }

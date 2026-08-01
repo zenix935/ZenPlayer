@@ -1,5 +1,5 @@
-#ifndef TRACKITEMDELEGATE_H
-#define TRACKITEMDELEGATE_H
+#ifndef LISTITEMDELEGATE_H
+#define LISTITEMDELEGATE_H
 
 #include <QIcon>
 #include <QEvent>
@@ -10,15 +10,13 @@
 #include <QAbstractItemView>
 #include <QStyledItemDelegate>
 
-class TrackItemDelegate : public QStyledItemDelegate
+class ListItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit TrackItemDelegate(QObject* parent=nullptr) : QStyledItemDelegate(parent) {}
+    explicit ListItemDelegate(QObject* parent=nullptr) : QStyledItemDelegate(parent) {}
 
     // Compute the 3-dot menu button rect (right side of visible area)
-    // visibleRight: the right edge of the viewport; when provided, the button
-    // is clamped to the visible area so it never scrolls off-screen.
     static QRect menuBtnRect(const QRect& fullRect, int visibleRight=-1)
     {
         int menuBtnWidth=22;
@@ -30,20 +28,14 @@ public:
                      menuBtnWidth, menuBtnHeight);
     }
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    void paint(QPainter* painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
         painter->save();
 
         QStyleOptionViewItem opt=option;
         initStyleOption(&opt, index);
 
-        int btnWidth=22;
-        int btnHeight=22;
-        int leftPadding=6;
-        int spacing=3;
-
         QRect fullRect=option.rect;
-        QRect btnRect(fullRect.left()+leftPadding, fullRect.top()+(fullRect.height()-btnHeight)/2, btnWidth, btnHeight);
 
         // Determine viewport widget for accurate coordinate mapping
         const QWidget* viewport=nullptr;
@@ -64,9 +56,8 @@ public:
         if (isHovered)
             opt.state |= QStyle::State_MouseOver;
 
-        // Draw item row and panel background (handles item selection & native style hover background)
+        // Draw item row and panel background
         QStyle* style=opt.widget ? opt.widget->style() : QApplication::style();
-        // Use visibleRect for native style drawing so it stays within viewport
         QStyleOptionViewItem clampedOpt=opt;
         clampedOpt.rect=visibleRect;
         style->drawPrimitive(QStyle::PE_PanelItemViewRow, &clampedOpt, painter, opt.widget);
@@ -78,25 +69,12 @@ public:
             QColor hoverOverlay=QColor(57, 57, 57, 255);
             painter->setBrush(hoverOverlay);
             painter->setPen(Qt::NoPen);
-            painter->drawRoundedRect(visibleRect, 8 ,8);
+            painter->drawRoundedRect(visibleRect, 8, 8);
         }
 
-        if (isHovered) 
+        if (isHovered)
         {
-            bool isBtnHovered=btnRect.contains(mousePos);
-
             painter->setRenderHint(QPainter::Antialiasing, true);
-
-            // Circular background for play button
-            QColor circleBg=isBtnHovered ? QColor(100, 0, 0, 230) : QColor(100, 0, 0, 140);
-            painter->setBrush(circleBg);
-            painter->setPen(Qt::NoPen);
-            painter->drawRoundedRect(btnRect, 4, 4);
-
-            // Draw play icon inside circle
-            QIcon playIcon(":/pics/pics/play.png");
-            QRect iconRect=btnRect.adjusted(3, 3, -3, -3);
-            playIcon.paint(painter, iconRect, Qt::AlignCenter);
 
             // Draw 3-dot menu button on the right side
             bool isMenuHovered=menuRect.contains(mousePos);
@@ -116,12 +94,12 @@ public:
             painter->drawEllipse(QPoint(centerX, centerY+dotSpacing), dotRadius, dotRadius);
         }
 
-        // Draw track name text (shifted right so play button doesn't overlap)
-        // Leave room on the right for the menu button when hovered
+        // Draw item text with room for menu button on hover
+        int leftPadding=6;
         QRect textRect=visibleRect;
-        textRect.setLeft(fullRect.left()+leftPadding + btnWidth+spacing);
+        textRect.setLeft(fullRect.left()+leftPadding);
         if (isHovered)
-            textRect.setRight(menuRect.left()-spacing);
+            textRect.setRight(menuRect.left()-3);
 
         QString text=index.data(Qt::DisplayRole).toString();
 
@@ -137,12 +115,14 @@ public:
 
         painter->restore();
     }
+
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
         QSize sz=QStyledItemDelegate::sizeHint(option, index);
         sz.setHeight(qMax(sz.height(), 32));
         return sz;
     }
+
     bool editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem &option, const QModelIndex &index) override
     {
         if (event->type()==QEvent::MouseButtonPress || event->type()==QEvent::MouseButtonRelease) 
@@ -150,19 +130,6 @@ public:
             QMouseEvent* mouseEvent=static_cast<QMouseEvent*>(event);
             if (mouseEvent->button()==Qt::LeftButton) 
             {
-                int btnWidth=22;
-                int btnHeight=22;
-                int leftPadding=8;
-                QRect btnRect(option.rect.left()+leftPadding, option.rect.top()+(option.rect.height()-btnHeight)/2, btnWidth, btnHeight);
-
-                if (btnRect.contains(mouseEvent->pos())) 
-                {
-                    if (event->type() == QEvent::MouseButtonRelease)
-                        emit playClicked(index);
-                    return true;
-                }
-
-                // Check 3-dot menu button click
                 const QWidget* vp=nullptr;
                 if (const QAbstractItemView* v=qobject_cast<const QAbstractItemView*>(option.widget))
                     vp=v->viewport();
@@ -180,8 +147,7 @@ public:
     }
 
 signals:
-    void playClicked(const QModelIndex &index);
     void menuClicked(const QModelIndex &index);
 };
 
-#endif // TRACKITEMDELEGATE_H
+#endif // LISTITEMDELEGATE_H
