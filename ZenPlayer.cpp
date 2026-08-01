@@ -355,7 +355,6 @@ void ZenPlayer::on_equalizerButton_clicked()
     equalizerDialog d;
     if(d.exec()==QDialog::Accepted)
     {
-        bool meow=0;
         // Handle equalizer settings
     }
 }
