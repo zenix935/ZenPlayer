@@ -21,6 +21,7 @@
 #include <algorithm>
 #include "json.hpp"
 #include "ui_ZenPlayer.h"
+#include "TrackItemDelegate.h"
 #include "createPlaylistDialog.h"
 
 using json=nlohmann::json;
@@ -34,8 +35,11 @@ class ZenPlayer : public QMainWindow
    Q_OBJECT
 
 public:
-   ZenPlayer(QWidget *parent = nullptr);
+   ZenPlayer(QWidget* parent = nullptr);
    ~ZenPlayer();
+
+protected:
+   bool eventFilter(QObject* watched, QEvent* event) override;
 
 private slots:
    void on_muteButton_clicked();
@@ -75,7 +79,7 @@ private slots:
    void on_queueListWidget_itemClicked(QListWidgetItem* item);
 
 private:  
-   Ui::ZenPlayerClass *ui;
+   Ui::ZenPlayerClass* ui;
    QMediaPlayer* player;
    QAudioOutput* audioOutput;
    bool mute,repeat,shuffle,pause,isFolder;

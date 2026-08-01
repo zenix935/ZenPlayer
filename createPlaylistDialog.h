@@ -1,6 +1,6 @@
 #pragma once
-#include <ui_createPlaylistDialog.h>
 #include <QDialog>
+#include <ui_createPlaylistDialog.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class createPlaylistDialog; };

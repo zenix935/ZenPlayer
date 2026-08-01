@@ -1,9 +1,9 @@
 #ifndef CLICKABLESLIDER_H
 #define CLICKABLESLIDER_H
 
+#include <QStyle>
 #include <QSlider>
 #include <QMouseEvent>
-#include <QStyle>
 
 class ClickableSlider : public QSlider
 {

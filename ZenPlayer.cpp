@@ -46,6 +46,54 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     connect(ui->tracksListWidget, &QListWidget::itemDoubleClicked, this, &ZenPlayer::on_tracksListWidget_itemDoubleClicked);
     connect(ui->sortComboBox, &QComboBox::currentIndexChanged, this, &ZenPlayer::on_sortComboBox_currentIndexChanged);
     connect(ui->orderComboBox, &QComboBox::currentIndexChanged, this, &ZenPlayer::on_orderComboBox_currentIndexChanged);
+
+    //Setup custom delegate for tracksListWidget with play button on hover
+    TrackItemDelegate* trackDelegate=new TrackItemDelegate(ui->tracksListWidget);
+    ui->tracksListWidget->setItemDelegate(trackDelegate);
+    ui->tracksListWidget->setMouseTracking(true);
+    ui->tracksListWidget->viewport()->setAttribute(Qt::WA_Hover, true);
+    ui->tracksListWidget->viewport()->installEventFilter(this);
+
+    connect(trackDelegate, &TrackItemDelegate::playClicked, this, [this](const QModelIndex &index) 
+    {
+        QListWidgetItem* item=ui->tracksListWidget->item(index.row());
+        if (item) 
+        {
+            ui->tracksListWidget->setCurrentItem(item);
+            on_tracksListWidget_itemDoubleClicked(item);
+        }
+    });
+}
+
+bool ZenPlayer::eventFilter(QObject* watched, QEvent* event)
+{
+    if (ui && watched==ui->tracksListWidget->viewport()) 
+    {
+        if (event->type()==QEvent::MouseMove || event->type()==QEvent::HoverMove) 
+        {
+            QMouseEvent* me=static_cast<QMouseEvent*>(event);
+            QModelIndex index=ui->tracksListWidget->indexAt(me->pos());
+            bool isHand=false;
+            if (index.isValid()) 
+            {
+                QRect rect=ui->tracksListWidget->visualRect(index);
+                int btnWidth=22;
+                int btnHeight=22;
+                int leftPadding=8;
+                QRect btnRect(rect.left()+leftPadding, rect.top()+(rect.height()-btnHeight)/2, btnWidth, btnHeight);
+                if (btnRect.contains(me->pos()))
+                    isHand=true;
+            }
+            ui->tracksListWidget->viewport()->setCursor(isHand ? Qt::PointingHandCursor : Qt::ArrowCursor);
+            ui->tracksListWidget->viewport()->update();
+        }
+        else if (event->type()==QEvent::Leave)
+        {
+            ui->tracksListWidget->viewport()->setCursor(Qt::ArrowCursor);
+            ui->tracksListWidget->viewport()->update();
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
 }
 
 ZenPlayer::~ZenPlayer()
