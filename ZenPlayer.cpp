@@ -369,7 +369,30 @@ void ZenPlayer::on_equalizerButton_clicked()
             equalizerCustomValues.push_back(d.ui->hz4kSlider->value());
             equalizerCustomValues.push_back(d.ui->hz8kSlider->value());
             equalizerCustomValues.push_back(d.ui->hz16kSlider->value());
+            ui->equalizerlabel->setText("Custom");
         }
+        switch (equalizerPresetIndex)
+        {
+        case 0: ui->equalizerlabel->setText("Flat"); break;
+        case 1: ui->equalizerlabel->setText("Treble Boost"); break;
+        case 2: ui->equalizerlabel->setText("Bass Boost"); break;
+        case 3: ui->equalizerlabel->setText("Headphones"); break;
+        case 4: ui->equalizerlabel->setText("Laptop"); break;
+        case 5: ui->equalizerlabel->setText("Speakers"); break;
+        case 6: ui->equalizerlabel->setText("Home Stereo"); break;
+        case 7: ui->equalizerlabel->setText("TV"); break;
+        case 8: ui->equalizerlabel->setText("Car"); break;
+        }
+        equalizerCurrentValues.clear();
+        equalizerCurrentValues.push_back(d.ui->hz62Slider->value());
+        equalizerCurrentValues.push_back(d.ui->hz125Slider->value());
+        equalizerCurrentValues.push_back(d.ui->hz250Slider->value());
+        equalizerCurrentValues.push_back(d.ui->hz500Slider->value());
+        equalizerCurrentValues.push_back(d.ui->hz1kSlider->value());
+        equalizerCurrentValues.push_back(d.ui->hz2kSlider->value());
+        equalizerCurrentValues.push_back(d.ui->hz4kSlider->value());
+        equalizerCurrentValues.push_back(d.ui->hz8kSlider->value());
+        equalizerCurrentValues.push_back(d.ui->hz16kSlider->value());
         // Handle equalizer settings
     }
 }
@@ -444,6 +467,19 @@ void ZenPlayer::loadData()
             {
                 std::string temp=data["equalizerPresetIndex"];
                 equalizerPresetIndex=std::stoi(temp);
+                switch (equalizerPresetIndex)
+                {
+                case 0: ui->equalizerlabel->setText("Flat"); break;
+                case 1: ui->equalizerlabel->setText("Treble Boost"); break;
+                case 2: ui->equalizerlabel->setText("Bass Boost"); break;
+                case 3: ui->equalizerlabel->setText("Headphones"); break;
+                case 4: ui->equalizerlabel->setText("Laptop"); break;
+                case 5: ui->equalizerlabel->setText("Speakers"); break;
+                case 6: ui->equalizerlabel->setText("Home Stereo"); break;
+                case 7: ui->equalizerlabel->setText("TV"); break;
+                case 8: ui->equalizerlabel->setText("Car"); break;
+                case 9: ui->equalizerlabel->setText("Custom"); break;
+                }
             }
             if(data.contains("equalizerCustomValues") && data["equalizerCustomValues"].is_array())
             {
@@ -1047,5 +1083,3 @@ void ZenPlayer::on_queueListWidget_itemClicked(QListWidgetItem* item)
     qDebug()<<index;
     playTrackAtIndex(index);
 }
-
-

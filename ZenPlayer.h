@@ -97,6 +97,7 @@ private:
    int currentQueueIndex;
    int equalizerPresetIndex=0;
    std::vector<int> equalizerCustomValues; 
+   std::vector<int> equalizerCurrentValues;
 
    void setDefaultTrackPic();
    QPixmap getRoundedPixmap(const QPixmap& src, int radius);

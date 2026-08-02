@@ -78,53 +78,43 @@ private slots:
 		case 0: // Flat
 			setSlidersDeactive();
 			setSlidersValue(0, 0, 0, 0, 0, 0, 0, 0, 0);
-			ui->presetLabel->setText("Flat");
 			break;
 		case 1: // Treble Boost
 			setSlidersDeactive();
 			setSlidersValue(0, 0, 0, 0, 0, 10, 40, 45, 70);
-			ui->presetLabel->setText("Trwble Boost");
 			break;
 		case 2: // Bass Boost
 			setSlidersDeactive();
 			setSlidersValue(70, 48, 40, 10, 0, 0, 0, 0, 0);
-			ui->presetLabel->setText("Bass Boost");
 			break;
 		case 3: // Headphones
 			setSlidersDeactive();
 			setSlidersValue(70, 44, 30, 2, 0, 5, 30, 29, 40);
-			ui->presetLabel->setText("Headphones");
 			break;
 		case 4: // Laptop
 			setSlidersDeactive();
 			setSlidersValue(60, 50, 60, 26, 20, 25, 60, 55, 70);
-			ui->presetLabel->setText("Laptop");
 			break;
 		case 5: // Speakers
 			setSlidersDeactive();
 			setSlidersValue(80, 54, 50, 27, 30, 23, 40, 36, 50);
-			ui->presetLabel->setText("Speakers");
 			break;
 		case 6: // Home Stereo
 			setSlidersDeactive();
 			setSlidersValue(60, 41, 40, 17, 20, 17, 40, 41, 60);
-			ui->presetLabel->setText("Home Stereo");
 			break;
 		case 7: // TV
 			setSlidersDeactive();
 			setSlidersValue(30, 45, 80, 28, 0, 13, 60, 61, 80);
-			ui->presetLabel->setText("TV");
 			break;
 		case 8: // Car
 			setSlidersDeactive();
 			setSlidersValue(80, 48, 30, 1, 0, 7, 40, 48, 70);
-			ui->presetLabel->setText("Car");
 			break;
 		case 9: // Custom
 			setSlidersActive();
 			setSlidersValue(customValues[0], customValues[1], customValues[2], customValues[3], customValues[4], customValues[5], customValues[6], 
 							customValues[7], customValues[8]);
-			ui->presetLabel->setText("Custom");
 			break;
 		}
 	}
