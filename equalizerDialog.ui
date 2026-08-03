@@ -6,21 +6,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>489</width>
-    <height>350</height>
+    <width>550</width>
+    <height>480</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>550</width>
+    <height>320</height>
+   </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>489</width>
-    <height>350</height>
+    <width>550</width>
+    <height>800</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
+   <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="presetLabel">
@@ -41,12 +47,32 @@
        </item>
        <item>
         <property name="text">
-         <string>Treble Boost</string>
+         <string>Classical</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Bass Boost</string>
+         <string>Club</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Dance</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Full Bass</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Full Bass &amp; Treble</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Full Treble</string>
         </property>
        </item>
        <item>
@@ -56,27 +82,52 @@
        </item>
        <item>
         <property name="text">
-         <string>Laptop</string>
+         <string>Large Hall</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Speakers</string>
+         <string>Live</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Home Stereo</string>
+         <string>Party</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>TV</string>
+         <string>Pop</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Car</string>
+         <string>Reggae</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Rock</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Ska</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Soft</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Soft Rock</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Techno</string>
         </property>
        </item>
        <item>
@@ -102,85 +153,11 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout_10">
-     <property name="spacing">
-      <number>20</number>
-     </property>
-     <property name="sizeConstraint">
-      <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-     </property>
-     <property name="leftMargin">
-      <number>10</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>26</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>+12 dB</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>  +8 dB</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>   +4dB</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>    0 dB</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>   -4 dB</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>   -8 dB</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string> -12 dB</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <property name="spacing">
-      <number>15</number>
-     </property>
-     <property name="sizeConstraint">
-      <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
-     </property>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_10" stretch="0,0,0">
        <item>
-        <widget class="QSlider" name="hz62Slider">
+        <widget class="QSlider" name="preampSlider">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -188,10 +165,10 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="minimum">
-          <number>-120</number>
+          <number>-200</number>
          </property>
          <property name="maximum">
-          <number>120</number>
+          <number>200</number>
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -199,12 +176,81 @@
          <property name="tickPosition">
           <enum>QSlider::TickPosition::TicksBothSides</enum>
          </property>
+         <property name="tickInterval">
+          <number>10</number>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="hz62Label">
+        <widget class="QLabel" name="preamplabel">
          <property name="text">
-          <string>62Hz</string>
+          <string>Preamp</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="preampValueLabel">
+         <property name="text">
+          <string>0.0dB</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Policy::Minimum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QSlider" name="hz60Slider">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="minimum">
+          <number>-200</number>
+         </property>
+         <property name="maximum">
+          <number>200</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TickPosition::TicksBothSides</enum>
+         </property>
+         <property name="tickInterval">
+          <number>10</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="hz60Label">
+         <property name="text">
+          <string>60Hz</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="hz60ValueLabel">
+         <property name="text">
+          <string>0.0dB</string>
          </property>
         </widget>
        </item>
@@ -213,7 +259,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QSlider" name="hz125Slider">
+        <widget class="QSlider" name="hz170Slider">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -221,10 +267,10 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="minimum">
-          <number>-120</number>
+          <number>-200</number>
          </property>
          <property name="maximum">
-          <number>120</number>
+          <number>200</number>
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -232,12 +278,22 @@
          <property name="tickPosition">
           <enum>QSlider::TickPosition::TicksBothSides</enum>
          </property>
+         <property name="tickInterval">
+          <number>10</number>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="hz125Label">
+        <widget class="QLabel" name="hz170Label">
          <property name="text">
-          <string>125Hz</string>
+          <string>170Hz</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="hz170ValueLabel">
+         <property name="text">
+          <string>0.0dB</string>
          </property>
         </widget>
        </item>
@@ -246,7 +302,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QSlider" name="hz250Slider">
+        <widget class="QSlider" name="hz310Slider">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -254,10 +310,10 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="minimum">
-          <number>-120</number>
+          <number>-200</number>
          </property>
          <property name="maximum">
-          <number>120</number>
+          <number>200</number>
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -265,12 +321,22 @@
          <property name="tickPosition">
           <enum>QSlider::TickPosition::TicksBothSides</enum>
          </property>
+         <property name="tickInterval">
+          <number>10</number>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="hz250Label">
+        <widget class="QLabel" name="hz310Label">
          <property name="text">
-          <string>250Hz</string>
+          <string>310Hz</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="hz310ValueLabel">
+         <property name="text">
+          <string>0.0dB</string>
          </property>
         </widget>
        </item>
@@ -279,7 +345,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QSlider" name="hz500Slider">
+        <widget class="QSlider" name="hz600Slider">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -287,10 +353,10 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="minimum">
-          <number>-120</number>
+          <number>-200</number>
          </property>
          <property name="maximum">
-          <number>120</number>
+          <number>200</number>
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -298,12 +364,22 @@
          <property name="tickPosition">
           <enum>QSlider::TickPosition::TicksBothSides</enum>
          </property>
+         <property name="tickInterval">
+          <number>10</number>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="hz500Label">
+        <widget class="QLabel" name="hz600Label">
          <property name="text">
-          <string>500Hz</string>
+          <string>600Hz</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="hz600ValueLabel">
+         <property name="text">
+          <string>0.0dB</string>
          </property>
         </widget>
        </item>
@@ -320,16 +396,19 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="minimum">
-          <number>-120</number>
+          <number>-200</number>
          </property>
          <property name="maximum">
-          <number>120</number>
+          <number>200</number>
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="tickPosition">
           <enum>QSlider::TickPosition::TicksBothSides</enum>
+         </property>
+         <property name="tickInterval">
+          <number>10</number>
          </property>
         </widget>
        </item>
@@ -340,12 +419,19 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QLabel" name="hz1kValueLabel">
+         <property name="text">
+          <string>0.0dB</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <widget class="QSlider" name="hz2kSlider">
+        <widget class="QSlider" name="hz3kSlider">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -353,10 +439,10 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="minimum">
-          <number>-120</number>
+          <number>-200</number>
          </property>
          <property name="maximum">
-          <number>120</number>
+          <number>200</number>
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -364,12 +450,22 @@
          <property name="tickPosition">
           <enum>QSlider::TickPosition::TicksBothSides</enum>
          </property>
+         <property name="tickInterval">
+          <number>10</number>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="hz2kLabel">
+        <widget class="QLabel" name="hz3kLabel">
          <property name="text">
-          <string>2kHz</string>
+          <string>3kHz</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="hz3kValueLabel">
+         <property name="text">
+          <string>0.0dB</string>
          </property>
         </widget>
        </item>
@@ -378,7 +474,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
-        <widget class="QSlider" name="hz4kSlider">
+        <widget class="QSlider" name="hz6kSlider">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -386,10 +482,10 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="minimum">
-          <number>-120</number>
+          <number>-200</number>
          </property>
          <property name="maximum">
-          <number>120</number>
+          <number>200</number>
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -397,12 +493,22 @@
          <property name="tickPosition">
           <enum>QSlider::TickPosition::TicksBothSides</enum>
          </property>
+         <property name="tickInterval">
+          <number>10</number>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="hz4kLabel">
+        <widget class="QLabel" name="hz6kLabel">
          <property name="text">
-          <string>4kHz</string>
+          <string>6kHz</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="hz6kValueLabel">
+         <property name="text">
+          <string>0.0dB</string>
          </property>
         </widget>
        </item>
@@ -411,7 +517,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <widget class="QSlider" name="hz8kSlider">
+        <widget class="QSlider" name="hz12kSlider">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -419,10 +525,10 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="minimum">
-          <number>-120</number>
+          <number>-200</number>
          </property>
          <property name="maximum">
-          <number>120</number>
+          <number>200</number>
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -430,12 +536,22 @@
          <property name="tickPosition">
           <enum>QSlider::TickPosition::TicksBothSides</enum>
          </property>
+         <property name="tickInterval">
+          <number>10</number>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="hz8kLabel">
+        <widget class="QLabel" name="hz12kLabel">
          <property name="text">
-          <string>8kHz</string>
+          <string>12kHz</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="hz12kValueLabel">
+         <property name="text">
+          <string>0.0dB</string>
          </property>
         </widget>
        </item>
@@ -444,7 +560,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_9">
        <item>
-        <widget class="QSlider" name="hz16kSlider">
+        <widget class="QSlider" name="hz14kSlider">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -452,10 +568,10 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="minimum">
-          <number>-120</number>
+          <number>-200</number>
          </property>
          <property name="maximum">
-          <number>120</number>
+          <number>200</number>
          </property>
          <property name="singleStep">
           <number>1</number>
@@ -469,6 +585,52 @@
          <property name="tickPosition">
           <enum>QSlider::TickPosition::TicksBothSides</enum>
          </property>
+         <property name="tickInterval">
+          <number>10</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="hz14kLabel">
+         <property name="text">
+          <string>14kHz</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="hz14kValueLabel">
+         <property name="text">
+          <string>0.0dB</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_11">
+       <item>
+        <widget class="QSlider" name="hz16kSlider">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimum">
+          <number>-200</number>
+         </property>
+         <property name="maximum">
+          <number>200</number>
+         </property>
+         <property name="value">
+          <number>0</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TickPosition::TicksBothSides</enum>
+         </property>
+         <property name="tickInterval">
+          <number>10</number>
+         </property>
         </widget>
        </item>
        <item>
@@ -478,11 +640,18 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QLabel" name="hz16kValueLabel">
+         <property name="text">
+          <string>0.0dB</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="2" column="0">
     <layout class="QHBoxLayout">
      <property name="spacing">
       <number>6</number>
@@ -533,8 +702,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>367</x>
-     <y>320</y>
+     <x>412</x>
+     <y>436</y>
     </hint>
     <hint type="destinationlabel">
      <x>257</x>
@@ -549,8 +718,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>458</x>
-     <y>317</y>
+     <x>499</x>
+     <y>436</y>
     </hint>
     <hint type="destinationlabel">
      <x>432</x>

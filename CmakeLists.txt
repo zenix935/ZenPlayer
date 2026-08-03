@@ -10,9 +10,6 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Multimedia)
 
-set(VLCQt_DIR "C:/MINE/codes/ZenPlayer/Utils/VLC-Qt/lib/cmake/VLCQt")
-find_package(VLCQt REQUIRED COMPONENTS Core Widgets)
-
 qt_add_executable(ZenPlayer
     main.cpp
     ZenPlayer.h
@@ -27,6 +24,8 @@ qt_add_executable(ZenPlayer
     createPlaylistDialog.h
     createPlaylistDialog.ui
     resource.rc
+    VlcPlayer.h
+    VlcPlayer.cpp
 )
 
 set_target_properties(ZenPlayer PROPERTIES
@@ -38,6 +37,4 @@ target_link_libraries(ZenPlayer PRIVATE
     Qt6::Core
     Qt6::Widgets
     Qt6::Multimedia
-    VLCQt::Core
-    VLCQt::Widgets
 )
