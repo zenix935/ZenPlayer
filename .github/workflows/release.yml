@@ -15,13 +15,13 @@ jobs:
         include:
           - os: windows-latest
             platform: windows
-            artifact_name: MusicPlayer-Windows.zip
+            artifact_name: ZenPlayer-Windows.zip
           - os: macos-latest # Apple Silicon (M1/M2/M3)
             platform: macos
-            artifact_name: MusicPlayer-macOS.dmg
+            artifact_name: ZenPlayer-macOS.dmg
           - os: ubuntu-latest
             platform: linux
-            artifact_name: MusicPlayer-Linux.AppImage
+            artifact_name: ZenPlayer-Linux.AppImage
 
     steps:
       - name: Checkout Source Code
@@ -30,7 +30,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.6.2'
+          version: '6.8.2'
           target: 'desktop'
           modules: 'qtmultimedia'
 
@@ -54,7 +54,6 @@ jobs:
           cmake --install build --prefix release_stage
           
           # 3. Run windeployqt on the installed executable
-          # Adjust the name below if your output executable has a different name
           windeployqt release_stage/bin/ZenPlayer.exe --no-compiler-runtime
           
           # 4. Copy libVLC binaries next to the executable
@@ -69,19 +68,22 @@ jobs:
       # 2. MACOS BUILD & DEPLOY
       # ==========================================
       - name: Install Dependencies (macOS)
-        if: matrix.platform == 'macOS'
+        if: matrix.platform == 'macos'
         run: |
           brew install cmake ninja vlc
 
       - name: Build & Package (macOS)
-        if: matrix.platform == 'macOS'
+        if: matrix.platform == 'macos'
         run: |
+          # Patch Qt's FindWrapOpenGL.cmake to prevent searching for deprecated AGL framework on macOS
+          find "$Qt6_DIR" -name "FindWrapOpenGL.cmake" -exec sed -i '' 's/NAMES AGL/NAMES AGL_DISABLED/g' {} + || true
+
           cmake -B build -S . -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$Qt6_DIR"
           cmake --build build
           
           # Deploy Qt dependencies and bundle into DMG
-          macdeployqt build/MusicPlayer.app -dmg
-          mv build/MusicPlayer.dmg ${{ matrix.artifact_name }}
+          macdeployqt build/ZenPlayer.app -dmg
+          mv build/ZenPlayer.dmg ${{ matrix.artifact_name }}
 
       # ==========================================
       # 3. LINUX BUILD & DEPLOY (AppImage)
@@ -107,7 +109,7 @@ jobs:
           
           # Generate AppImage
           ./linuxdeploy-x86_64.AppImage --appdir build/AppDir --plugin qt --output appimage
-          mv *-x86_64.AppImage ${{ matrix.artifact_name }}
+          mv ZenPlayer-*.AppImage ${{ matrix.artifact_name }}
 
       # ==========================================
       # 4. UPLOAD TO GITHUB RELEASES
