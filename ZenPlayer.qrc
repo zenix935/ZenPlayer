@@ -12,7 +12,6 @@
         <file>pics/pause.png</file>
         <file>pics/play.png</file>
         <file>pics/add.png</file>
-        <file>pics/icon.png</file>
         <file>pics/equalizer.png</file>
     </qresource>
 </RCC>
