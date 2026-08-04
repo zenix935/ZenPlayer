@@ -1,13 +1,136 @@
 #include "VlcEngine.h"
+#include "VlcEngine.moc"
 #include <QDir>
 #include <QFile>
 #include <QDebug>
 #include <QCoreApplication>
+#include <QtMath>
+#include <QMutexLocker>
+#include <algorithm>
 
-// ─────────────────────────────────────────────────────
+//  SoftwareAudioMixer — mixes raw PCM stereo streams
+//  from all VlcEngine instances into a single QAudioSink
+//  stream sent to the sound card.
+class SoftwareAudioMixer : public QObject
+{
+    Q_OBJECT
+public:
+    static SoftwareAudioMixer& instance()
+    {
+        static SoftwareAudioMixer mixer;
+        return mixer;
+    }
+
+    void registerEngine(VlcEngine* engine)
+    {
+        QMutexLocker locker(&m_mutex);
+        if (!m_engines.contains(engine))
+            m_engines.append(engine);
+        ensureAudioSink();
+    }
+
+    void unregisterEngine(VlcEngine* engine)
+    {
+        QMutexLocker locker(&m_mutex);
+        m_engines.removeAll(engine);
+    }
+
+    void mixAndWrite()
+    {
+        QMutexLocker locker(&m_mutex);
+        if (!m_audioSink || !m_audioDevice)
+        {
+            ensureAudioSink();
+            if (!m_audioSink || !m_audioDevice)
+                return;
+        }
+
+        qint64 bytesFree=m_audioSink->bytesFree();
+        if (bytesFree <= 0)
+            return;
+
+        // Cap bytesFree per pass for low latency
+        bytesFree=qMin(bytesFree, qint64(16384));
+        int framesToMix=static_cast<int>(bytesFree/4);
+        if (framesToMix <= 0)
+            return;
+
+        int maxAvailFrames=0;
+        for (VlcEngine* engine : m_engines)
+        {
+            int engineAvail=engine->pcmBufferFrames();
+            if (engineAvail > maxAvailFrames)
+                maxAvailFrames=engineAvail;
+        }
+
+        if (maxAvailFrames <= 0)
+            return;
+
+        int framesToProcess=qMin(framesToMix, maxAvailFrames);
+        int bytesToProcess=framesToProcess*4;
+
+        if (m_mixBuffer.size() < bytesToProcess)
+            m_mixBuffer.resize(bytesToProcess);
+
+        int16_t* mixOut=reinterpret_cast<int16_t*>(m_mixBuffer.data());
+        std::fill(mixOut, mixOut+(framesToProcess*2), static_cast<int16_t>(0));
+
+        for (VlcEngine* engine : m_engines)
+            engine->mixPcmFrames(mixOut, framesToProcess);
+
+        m_audioDevice->write(m_mixBuffer.constData(), bytesToProcess);
+    }
+
+private:
+    SoftwareAudioMixer() : QObject(nullptr) {}
+    ~SoftwareAudioMixer() override
+    {
+        if (m_timer)
+        {
+            m_timer->stop();
+            delete m_timer;
+            m_timer=nullptr;
+        }
+        if (m_audioSink)
+        {
+            m_audioSink->stop();
+            delete m_audioSink;
+            m_audioSink=nullptr;
+        }
+    }
+
+    void ensureAudioSink()
+    {
+        if (m_audioSink)
+            return;
+
+        QAudioFormat format;
+        format.setSampleRate(44100);
+        format.setChannelCount(2);
+        format.setSampleFormat(QAudioFormat::Int16);
+
+        QAudioDevice device = QMediaDevices::defaultAudioOutput();
+        if (!device.isFormatSupported(format))
+            format = device.preferredFormat();
+
+        m_audioSink=new QAudioSink(device, format, this);
+        m_audioSink->setBufferSize(44100*4/4); // ~250ms buffer
+        m_audioDevice=m_audioSink->start();
+
+        m_timer=new QTimer(this);
+        connect(m_timer, &QTimer::timeout, this, &SoftwareAudioMixer::mixAndWrite);
+        m_timer->start(15); // ~66 Hz polling loop
+    }
+
+    QMutex m_mutex;
+    QList<VlcEngine*> m_engines;
+    QAudioSink* m_audioSink=nullptr;
+    QIODevice* m_audioDevice=nullptr;
+    QByteArray m_mixBuffer;
+    QTimer* m_timer=nullptr;
+};
+
 //  libVLC event type constants we subscribe to.
-//  (from vlc/libvlc_events.h — stable ABI)
-// ─────────────────────────────────────────────────────
 static constexpr int VLC_EVENT_MediaPlayerPlaying         =0x100+4;  // 260
 static constexpr int VLC_EVENT_MediaPlayerPaused          =0x100+5;  // 261
 static constexpr int VLC_EVENT_MediaPlayerStopped         =0x100+6;  // 262
@@ -15,25 +138,6 @@ static constexpr int VLC_EVENT_MediaPlayerEndReached      =0x100+9;  // 265
 static constexpr int VLC_EVENT_MediaPlayerEncounteredError=0x100+10; // 266
 static constexpr int VLC_EVENT_MediaPlayerTimeChanged     =0x100+13; // 269
 static constexpr int VLC_EVENT_MediaPlayerLengthChanged   =0x100+15; // 271
-
-// ─────────────────────────────────────────────────────
-//  libvlc_event_t layout (simplified — we only read the
-//  fields we need).  The real struct has a union; we
-//  replicate just enough to extract time/length values.
-// ─────────────────────────────────────────────────────
-//  Unfortunately we can't include <vlc/libvlc_events.h>
-//  because the user doesn't have the SDK installed.
-//  We'll access event->type (int at offset 0) and for
-//  time-changed the int64 at the start of the union.
-//  The union begins right after {int type; void* p_obj;}.
-//
-//  On 64-bit Windows:
-//    offset 0:  int     type
-//    offset 8:  void*   p_obj  (8 bytes on x64)
-//    offset 16: union   u      — first member is a struct
-//               containing an int64_t (new_time or new_length)
-//
-//  We'll use reinterpret_cast to read these safely.
 
 struct VlcEventHeader 
 {
@@ -52,8 +156,8 @@ VlcEngine::VlcEngine(QObject* parent) : QObject(parent)
 
 VlcEngine::~VlcEngine()
 {
+    SoftwareAudioMixer::instance().unregisterEngine(this);
     m_pollTimer.stop();
-
     if (m_vlcEqualizer && fn_eq_release)
         fn_eq_release(m_vlcEqualizer);
 
@@ -69,9 +173,7 @@ VlcEngine::~VlcEngine()
         fn_release(m_vlcInstance);
 }
 
-// ─────────────────────────────────────────────────────
 //  init()
-// ─────────────────────────────────────────────────────
 bool VlcEngine::init(const QString& vlcLibPath)
 {
     if (m_vlcInstance)
@@ -141,6 +243,16 @@ bool VlcEngine::init(const QString& vlcLibPath)
         return false;
     }
 
+    // Configure custom PCM audio callbacks
+    if (fn_audio_set_format && fn_audio_set_callbacks)
+    {
+        fn_audio_set_format(m_vlcPlayer, "S16N", 44100, 2);
+        fn_audio_set_callbacks(m_vlcPlayer, &VlcEngine::vlcAudioPlayCallback, &VlcEngine::vlcAudioPauseCallback, &VlcEngine::vlcAudioResumeCallback,
+                               &VlcEngine::vlcAudioFlushCallback, &VlcEngine::vlcAudioDrainCallback, this);
+    }
+
+    SoftwareAudioMixer::instance().registerEngine(this);
+
     // Subscribe to events
     if (fn_event_manager && fn_event_attach)
     {
@@ -150,8 +262,6 @@ bool VlcEngine::init(const QString& vlcLibPath)
         fn_event_attach(em, VLC_EVENT_MediaPlayerStopped, &VlcEngine::vlcEventCallback, this);
         fn_event_attach(em, VLC_EVENT_MediaPlayerEndReached, &VlcEngine::vlcEventCallback, this);
         fn_event_attach(em, VLC_EVENT_MediaPlayerEncounteredError, &VlcEngine::vlcEventCallback, this);
-        // We intentionally do NOT subscribe to TimeChanged / LengthChanged here
-        // because those callbacks fire on VLC threads. We poll instead.
     }
 
     m_pollTimer.start();
@@ -205,6 +315,8 @@ bool VlcEngine::resolveFunctions()
     RESOLVE(fn_eq_preset_name,       pfn_libvlc_audio_equalizer_get_preset_name,    "libvlc_audio_equalizer_get_preset_name");
     RESOLVE(fn_eq_band_freq,         pfn_libvlc_audio_equalizer_get_band_frequency, "libvlc_audio_equalizer_get_band_frequency");
     RESOLVE(fn_player_set_equalizer, pfn_libvlc_media_player_set_equalizer,         "libvlc_media_player_set_equalizer");
+    RESOLVE(fn_audio_set_callbacks,  pfn_libvlc_audio_set_callbacks,                "libvlc_audio_set_callbacks");
+    RESOLVE(fn_audio_set_format,     pfn_libvlc_audio_set_format,                   "libvlc_audio_set_format");
 
     #undef RESOLVE
     return true;
@@ -217,6 +329,8 @@ void VlcEngine::play(const QString& filePath)
 {
     if (!m_vlcInstance || !m_vlcPlayer)
         return;
+
+    clearPcmBuffer();
 
     // Convert to native separators for libVLC
     QByteArray pathUtf8=QDir::toNativeSeparators(filePath).toUtf8();
@@ -231,8 +345,8 @@ void VlcEngine::play(const QString& filePath)
     fn_player_set_media(m_vlcPlayer, media);
     fn_media_release(media);  // player holds its own reference
 
-    // Restore volume before playing
-    fn_audio_set_volume(m_vlcPlayer, m_muted ? 0 : m_volume);
+    if (fn_audio_set_volume)
+        fn_audio_set_volume(m_vlcPlayer, 100);
 
     // Re-apply equalizer if one is active
     if (m_vlcEqualizer)
@@ -245,8 +359,6 @@ void VlcEngine::resume()
 {
     if (!m_vlcPlayer)
         return;
-
-    // libvlc_media_player_play() resumes if paused
     fn_player_play(m_vlcPlayer);
 }
 
@@ -262,6 +374,7 @@ void VlcEngine::stop()
     if (!m_vlcPlayer)
         return;
     fn_player_stop(m_vlcPlayer);
+    clearPcmBuffer();
     setState(Stopped);
 }
 
@@ -269,6 +382,7 @@ void VlcEngine::setPosition(qint64 positionMs)
 {
     if (!m_vlcPlayer)
         return;
+    clearPcmBuffer();
     fn_player_set_time(m_vlcPlayer, positionMs);
 }
 
@@ -300,27 +414,100 @@ VlcEngine::State VlcEngine::state() const { return m_state; }
 // ─────────────────────────────────────────────────────
 //  Volume
 // ─────────────────────────────────────────────────────
-void VlcEngine::setVolume(int percent)
-{
-    int temp=percent;
-    percent=static_cast<int>(temp*(6.6-qLn(temp)));
-    m_volume=qBound(0, percent, 200);
-    if (m_vlcPlayer && !m_muted)
-        fn_audio_set_volume(m_vlcPlayer, m_volume);
-}
+void VlcEngine::setVolume(int percent) { m_volume=qBound(0, percent, 100); }
 
 int VlcEngine::volume() const { return m_volume; }
 
-void VlcEngine::setMuted(bool muted)
+void VlcEngine::setMuted(bool muted) { m_muted=muted; }
+
+void VlcEngine::setSoftwareVolume(float vol) { m_softwareVolume = qBound(0.0f, vol, 1.0f); }
+
+float VlcEngine::softwareVolume() const { return m_softwareVolume; }
+
+float VlcEngine::effectiveVolume() const
 {
-    m_muted=muted;
-    if (m_vlcPlayer)
-        fn_audio_set_mute(m_vlcPlayer, muted ? 1 : 0);
+    if (m_muted) return 0.0f;
+    return m_softwareVolume*(m_volume/100.0f);
 }
 
-// ─────────────────────────────────────────────────────
+//  PCM Software Mixing
+int VlcEngine::pcmBufferFrames() const
+{
+    QMutexLocker locker(&m_pcmMutex);
+    return m_pcmBuffer.size()/4;
+}
+
+void VlcEngine::clearPcmBuffer()
+{
+    QMutexLocker locker(&m_pcmMutex);
+    m_pcmBuffer.clear();
+}
+
+void VlcEngine::mixPcmFrames(int16_t* mixOut, int framesToProcess)
+{
+    QMutexLocker locker(&m_pcmMutex);
+    int availFrames=m_pcmBuffer.size()/4;
+    int framesToTake=qMin(framesToProcess, availFrames);
+    if (framesToTake <= 0)
+        return;
+
+    const int16_t* inSamples=reinterpret_cast<const int16_t*>(m_pcmBuffer.constData());
+    float vol=effectiveVolume();
+
+    for (int i=0; i<framesToTake*2; ++i)
+    {
+        int32_t val=mixOut[i]+static_cast<int32_t>(inSamples[i]*vol);
+        if (val > 32767) 
+            val=32767;
+        else if (val < -32768) 
+            val=-32768;
+        mixOut[i]=static_cast<int16_t>(val);
+    }
+
+    m_pcmBuffer.remove(0, framesToTake*4);
+}
+
+//  libVLC Audio Callbacks
+void VlcEngine::vlcAudioPlayCallback(void *data, const void *samples, unsigned count, int64_t pts)
+{
+    Q_UNUSED(pts);
+    VlcEngine *self=static_cast<VlcEngine*>(data);
+    if (!self) 
+        return;
+
+    int bytes=count*4;
+    {
+        QMutexLocker locker(&self->m_pcmMutex);
+        if (self->m_pcmBuffer.size() < 44100*4*2) // max 2s buffer cap
+            self->m_pcmBuffer.append(reinterpret_cast<const char*>(samples), bytes);
+    }
+
+    SoftwareAudioMixer::instance().mixAndWrite();
+}
+
+void VlcEngine::vlcAudioPauseCallback(void *data, int64_t pts)
+{
+    Q_UNUSED(data);
+    Q_UNUSED(pts);
+}
+
+void VlcEngine::vlcAudioResumeCallback(void *data, int64_t pts)
+{
+    Q_UNUSED(data);
+    Q_UNUSED(pts);
+}
+
+void VlcEngine::vlcAudioFlushCallback(void *data, int64_t pts)
+{
+    Q_UNUSED(pts);
+    VlcEngine *self=static_cast<VlcEngine*>(data);
+    if (!self) return;
+    self->clearPcmBuffer();
+}
+
+void VlcEngine::vlcAudioDrainCallback(void *data) { Q_UNUSED(data); }
+
 //  Equalizer
-// ─────────────────────────────────────────────────────
 void VlcEngine::applyEqualizer(float preampDb, const float* bandDb, int bandCount)
 {
     if (!fn_eq_new || !fn_eq_set_preamp || !fn_eq_set_amp || !fn_player_set_equalizer)
@@ -352,32 +539,20 @@ void VlcEngine::resetEqualizer()
         fn_eq_release(m_vlcEqualizer);
         m_vlcEqualizer=nullptr;
     }
-    // Pass nullptr to disable the equalizer
     if (m_vlcPlayer && fn_player_set_equalizer)
         fn_player_set_equalizer(m_vlcPlayer, nullptr);
 }
 
-unsigned VlcEngine::equalizerBandCount()
-{
-    // This is a static query; can't call through instance.
-    // Return VLC's standard 10 bands.
-    return 10;
-}
+unsigned VlcEngine::equalizerBandCount() { return 10; }
 
 float VlcEngine::equalizerBandFrequency(unsigned index)
 {
-    // Standard VLC 10-band frequencies
     static const float freqs[]={60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000};
     if (index<10)
         return freqs[index];
     return 0;
 }
 
-// ─────────────────────────────────────────────────────
-//  Polling timer — runs on the Qt event loop at ~10 Hz.
-//  Emits positionChanged and durationChanged when values
-//  actually change, keeping UI updates efficient.
-// ─────────────────────────────────────────────────────
 void VlcEngine::onPollTimer()
 {
     if (!m_vlcPlayer)
@@ -398,19 +573,11 @@ void VlcEngine::onPollTimer()
     }
 }
 
-// ─────────────────────────────────────────────────────
-//  VLC event callback (called on VLC internal thread!)
-//  We only do a state transition here and use
-//  QMetaObject::invokeMethod to bounce to the Qt thread.
-// ─────────────────────────────────────────────────────
 void VlcEngine::vlcEventCallback(const libvlc_event_t* event, void* userData)
 {
     VlcEngine* self=static_cast<VlcEngine*>(userData);
-    // Capture the event type by value — the event pointer becomes
-    // invalid as soon as this callback returns.
     auto header=reinterpret_cast<const VlcEventHeader*>(event);
     int eventType=header->type;
-    // Bounce to the Qt main thread
     QMetaObject::invokeMethod(self, [self, eventType]() {self->handleVlcEventType(eventType);}, Qt::QueuedConnection);
 }
 
@@ -420,9 +587,8 @@ void VlcEngine::handleVlcEventType(int type)
     {
     case VLC_EVENT_MediaPlayerPlaying:
         setState(Playing);
-        // Apply volume on start (VLC resets it sometimes)
         if (fn_audio_set_volume)
-            fn_audio_set_volume(m_vlcPlayer, m_muted ? 0 : m_volume);
+            fn_audio_set_volume(m_vlcPlayer, 100);
         break;
     case VLC_EVENT_MediaPlayerPaused:
         setState(Paused);

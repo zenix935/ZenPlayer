@@ -86,10 +86,21 @@ private slots:
    void showQueueContextMenu(const QPoint &pos);
    void onVlcStateChanged(VlcEngine::State newState);
    void on_searchPushButton_clicked();
+   void onCrossfadeTimerTimeout();
 
 private:  
    Ui::ZenPlayerClass* ui;
    VlcEngine* vlcEngine;
+   VlcEngine* vlcEngine2;
+   VlcEngine* activeEngine;
+   VlcEngine* fadingEngine;
+
+   QTimer* crossfadeTimer;
+   bool isCrossfading=false;
+   int crossfadeElapsedMs=0;
+   int crossfadeDurationMs=0;
+   bool crossfadeTriggered=false;
+
    QMediaPlayer* metaPlayer;
    bool mute,repeat,shuffle,pause,isFolder;
    bool showRemainingTime=false;
@@ -106,7 +117,11 @@ private:
    std::vector<int> equalizerCustomValues; 
    std::vector<int> equalizerCurrentValues;
 
-   void applyEqualizerToVlc();
+   void applyEqualizerToVlc(VlcEngine* targetEngine = nullptr);
+   void checkTriggerCrossfade(qint64 positionMs);
+   void startCrossfadeTo(int nextIndex, qint64 fadeMs);
+   void cancelCrossfade();
+
    void setDefaultTrackPic();
    QPixmap getRoundedPixmap(const QPixmap& src, int radius);
    QString formatTime(qint64 ms);

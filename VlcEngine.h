@@ -1,14 +1,18 @@
 #pragma once
 
+#include <QTimer>
+#include <QMutex>
 #include <QObject>
 #include <QString>
-#include <QTimer>
 #include <QLibrary>
+#include <QByteArray>
+#include <QAudioSink>
+#include <QAudioFormat>
+#include <QAudioDevice>
+#include <QMediaDevices>
 
-// ─────────────────────────────────────────────────────
 //  Forward-declare opaque libVLC types so we never need
 //  the VLC SDK headers at compile time.
-// ─────────────────────────────────────────────────────
 struct libvlc_instance_t;
 struct libvlc_media_t;
 struct libvlc_media_player_t;
@@ -16,67 +20,64 @@ struct libvlc_equalizer_t;
 struct libvlc_event_t;
 struct libvlc_event_manager_t;
 
-// ─────────────────────────────────────────────────────
 //  Function-pointer typedefs for every libVLC API we use.
 //  Resolved at runtime via QLibrary.
-// ─────────────────────────────────────────────────────
 
 // Core
-using pfn_libvlc_new                            = libvlc_instance_t*  (*)(int, const char* const*);
-using pfn_libvlc_release                         = void               (*)(libvlc_instance_t*);
+using pfn_libvlc_new                             = libvlc_instance_t*     (*)(int, const char* const*);
+using pfn_libvlc_release                         = void                   (*)(libvlc_instance_t*);
 
 // Media
-using pfn_libvlc_media_new_path                  = libvlc_media_t*    (*)(libvlc_instance_t*, const char*);
-using pfn_libvlc_media_release                   = void               (*)(libvlc_media_t*);
+using pfn_libvlc_media_new_path                  = libvlc_media_t*        (*)(libvlc_instance_t*, const char*);
+using pfn_libvlc_media_release                   = void                   (*)(libvlc_media_t*);
 
 // Media Player
 using pfn_libvlc_media_player_new                = libvlc_media_player_t* (*)(libvlc_instance_t*);
-using pfn_libvlc_media_player_release            = void               (*)(libvlc_media_player_t*);
-using pfn_libvlc_media_player_set_media          = void               (*)(libvlc_media_player_t*, libvlc_media_t*);
-using pfn_libvlc_media_player_play               = int                (*)(libvlc_media_player_t*);
-using pfn_libvlc_media_player_pause              = void               (*)(libvlc_media_player_t*);
-using pfn_libvlc_media_player_stop               = void               (*)(libvlc_media_player_t*);
-using pfn_libvlc_media_player_get_time           = int64_t            (*)(libvlc_media_player_t*);
-using pfn_libvlc_media_player_set_time           = void               (*)(libvlc_media_player_t*, int64_t);
-using pfn_libvlc_media_player_get_length         = int64_t            (*)(libvlc_media_player_t*);
-using pfn_libvlc_media_player_get_position       = float              (*)(libvlc_media_player_t*);
-using pfn_libvlc_media_player_is_playing         = int                (*)(libvlc_media_player_t*);
-using pfn_libvlc_media_player_get_state          = int                (*)(libvlc_media_player_t*);
-using pfn_libvlc_audio_set_volume                = int                (*)(libvlc_media_player_t*, int);
-using pfn_libvlc_audio_get_volume                = int                (*)(libvlc_media_player_t*);
-using pfn_libvlc_audio_set_mute                  = void               (*)(libvlc_media_player_t*, int);
+using pfn_libvlc_media_player_release            = void                   (*)(libvlc_media_player_t*);
+using pfn_libvlc_media_player_set_media          = void                   (*)(libvlc_media_player_t*, libvlc_media_t*);
+using pfn_libvlc_media_player_play               = int                    (*)(libvlc_media_player_t*);
+using pfn_libvlc_media_player_pause              = void                   (*)(libvlc_media_player_t*);
+using pfn_libvlc_media_player_stop               = void                   (*)(libvlc_media_player_t*);
+using pfn_libvlc_media_player_get_time           = int64_t                (*)(libvlc_media_player_t*);
+using pfn_libvlc_media_player_set_time           = void                   (*)(libvlc_media_player_t*, int64_t);
+using pfn_libvlc_media_player_get_length         = int64_t                (*)(libvlc_media_player_t*);
+using pfn_libvlc_media_player_get_position       = float                  (*)(libvlc_media_player_t*);
+using pfn_libvlc_media_player_is_playing         = int                    (*)(libvlc_media_player_t*);
+using pfn_libvlc_media_player_get_state          = int                    (*)(libvlc_media_player_t*);
+using pfn_libvlc_audio_set_volume                = int                    (*)(libvlc_media_player_t*, int);
+using pfn_libvlc_audio_get_volume                = int                    (*)(libvlc_media_player_t*);
+using pfn_libvlc_audio_set_mute                  = void                   (*)(libvlc_media_player_t*, int);
 
 // Events
 using pfn_libvlc_media_player_event_manager      = libvlc_event_manager_t* (*)(libvlc_media_player_t*);
-using pfn_libvlc_event_attach                    = int                (*)(libvlc_event_manager_t*, int, void(*)(const libvlc_event_t*, void*), void*);
+using pfn_libvlc_event_attach                    = int                     (*)(libvlc_event_manager_t*, int, void(*)(const libvlc_event_t*, void*), void*);
 
 // Equalizer
-using pfn_libvlc_audio_equalizer_new             = libvlc_equalizer_t* (*)();
-using pfn_libvlc_audio_equalizer_new_from_preset = libvlc_equalizer_t* (*)(unsigned);
-using pfn_libvlc_audio_equalizer_release         = void               (*)(libvlc_equalizer_t*);
-using pfn_libvlc_audio_equalizer_set_preamp      = int                (*)(libvlc_equalizer_t*, float);
-using pfn_libvlc_audio_equalizer_get_preamp      = float              (*)(libvlc_equalizer_t*);
-using pfn_libvlc_audio_equalizer_set_amp_at_index = int               (*)(libvlc_equalizer_t*, float, unsigned);
-using pfn_libvlc_audio_equalizer_get_amp_at_index = float             (*)(libvlc_equalizer_t*, unsigned);
-using pfn_libvlc_audio_equalizer_get_band_count  = unsigned           (*)();
-using pfn_libvlc_audio_equalizer_get_preset_count = unsigned          (*)();
-using pfn_libvlc_audio_equalizer_get_preset_name = const char*        (*)(unsigned);
-using pfn_libvlc_audio_equalizer_get_band_frequency = float           (*)(unsigned);
-using pfn_libvlc_media_player_set_equalizer      = int                (*)(libvlc_media_player_t*, libvlc_equalizer_t*);
+using pfn_libvlc_audio_equalizer_new                = libvlc_equalizer_t* (*)();
+using pfn_libvlc_audio_equalizer_new_from_preset    = libvlc_equalizer_t* (*)(unsigned);
+using pfn_libvlc_audio_equalizer_release            = void                (*)(libvlc_equalizer_t*);
+using pfn_libvlc_audio_equalizer_set_preamp         = int                 (*)(libvlc_equalizer_t*, float);
+using pfn_libvlc_audio_equalizer_get_preamp         = float               (*)(libvlc_equalizer_t*);
+using pfn_libvlc_audio_equalizer_set_amp_at_index   = int                 (*)(libvlc_equalizer_t*, float, unsigned);
+using pfn_libvlc_audio_equalizer_get_amp_at_index   = float               (*)(libvlc_equalizer_t*, unsigned);
+using pfn_libvlc_audio_equalizer_get_band_count     = unsigned            (*)();
+using pfn_libvlc_audio_equalizer_get_preset_count   = unsigned            (*)();
+using pfn_libvlc_audio_equalizer_get_preset_name    = const char*         (*)(unsigned);
+using pfn_libvlc_audio_equalizer_get_band_frequency = float               (*)(unsigned);
+using pfn_libvlc_media_player_set_equalizer         = int                 (*)(libvlc_media_player_t*, libvlc_equalizer_t*);
 
-// ─────────────────────────────────────────────────────
+// Audio Callbacks
+using pfn_libvlc_audio_set_callbacks             = void               (*)(libvlc_media_player_t*,
+                                                                          void(*)(void*, const void*, unsigned, int64_t),
+                                                                          void(*)(void*, int64_t),
+                                                                          void(*)(void*, int64_t),
+                                                                          void(*)(void*, int64_t),
+                                                                          void(*)(void*),
+                                                                          void*);
+using pfn_libvlc_audio_set_format                = void               (*)(libvlc_media_player_t*, const char*, unsigned, unsigned);
+
 //  VlcEngine — lightweight Qt wrapper around libVLC
 //  for audio playback & 10-band equalizer.
-//
-//  Usage:
-//    VlcEngine *engine = new VlcEngine(this);
-//    if (!engine->init("path/to/libvlc.dll"))  { /* handle error */ }
-//    engine->setVolume(50);
-//    engine->play("C:/Music/track.mp3");
-//
-//  The class emits positionChanged(ms), durationChanged(ms),
-//  and stateChanged(VlcEngine::State) so the UI can react.
-// ─────────────────────────────────────────────────────
 
 class VlcEngine : public QObject
 {
@@ -119,11 +120,16 @@ public:
     int  volume() const;
     void setMuted(bool muted);
 
+    void  setSoftwareVolume(float vol);     // 0.0f to 1.0f (crossfade)
+    float softwareVolume() const;
+    float effectiveVolume() const;
+
+    // ── Software Mixing PCM Buffer ────────────────────
+    int   pcmBufferFrames() const;
+    void  mixPcmFrames(int16_t* mixOut, int framesToProcess);
+    void  clearPcmBuffer();
+
     // ── Equalizer ─────────────────────────────────────
-    //  Band values are in dB (-20.0 … +20.0).
-    //  Preamp is also in dB (-20.0 … +20.0).
-    //  "index 0" = first band (~60 Hz).
-    //  The UI stores values as int*10, so call with val/10.0.
     void applyEqualizer(float preampDb, const float* bandDb, int bandCount);
     void resetEqualizer();                  // flat / disable
 
@@ -145,17 +151,28 @@ private:
     static void vlcEventCallback(const libvlc_event_t* event, void* userData);
     void handleVlcEventType(int eventType);
 
+    // Audio Callbacks from libVLC
+    static void vlcAudioPlayCallback(void *data, const void *samples, unsigned count, int64_t pts);
+    static void vlcAudioPauseCallback(void *data, int64_t pts);
+    static void vlcAudioResumeCallback(void *data, int64_t pts);
+    static void vlcAudioFlushCallback(void *data, int64_t pts);
+    static void vlcAudioDrainCallback(void *data);
+
     // ── libVLC handles ────────────────────────────────
     libvlc_instance_t*      m_vlcInstance  = nullptr;
     libvlc_media_player_t*  m_vlcPlayer    = nullptr;
     libvlc_equalizer_t*     m_vlcEqualizer = nullptr;
 
     // Cached state so we can detect transitions
-    State   m_state    = Stopped;
-    qint64  m_lastPos  = -1;
-    qint64  m_lastDur  = -1;
-    int     m_volume   = 50;
-    bool    m_muted    = false;
+    State   m_state          = Stopped;
+    qint64  m_lastPos        = -1;
+    qint64  m_lastDur        = -1;
+    int     m_volume         = 50;
+    float   m_softwareVolume = 1.0f;
+    bool    m_muted          = false;
+
+    mutable QMutex m_pcmMutex;
+    QByteArray     m_pcmBuffer;
 
     // ── Dynamically-resolved function pointers ────────
     QLibrary m_lib;
@@ -197,6 +214,9 @@ private:
     pfn_libvlc_audio_equalizer_get_preset_name fn_eq_preset_name         = nullptr;
     pfn_libvlc_audio_equalizer_get_band_frequency fn_eq_band_freq        = nullptr;
     pfn_libvlc_media_player_set_equalizer      fn_player_set_equalizer   = nullptr;
+
+    pfn_libvlc_audio_set_callbacks             fn_audio_set_callbacks    = nullptr;
+    pfn_libvlc_audio_set_format                fn_audio_set_format       = nullptr;
 
     bool resolveFunctions();
 

@@ -14,7 +14,18 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
 
     vlcEngine=new VlcEngine(this);
     if (!vlcEngine->init(""))
-        qWarning()<<"[ZenPlayer] Failed to initialize VlcEngine";
+        qWarning()<<"[ZenPlayer] Failed to initialize vlcEngine";
+
+    vlcEngine2=new VlcEngine(this);
+    if (!vlcEngine2->init(""))
+        qWarning()<<"[ZenPlayer] Failed to initialize vlcEngine2";
+
+    activeEngine=vlcEngine;
+    fadingEngine=nullptr;
+
+    crossfadeTimer=new QTimer(this);
+    crossfadeTimer->setInterval(20);
+    connect(crossfadeTimer, &QTimer::timeout, this, &ZenPlayer::onCrossfadeTimerTimeout);
 
     metaPlayer=new QMediaPlayer(this);
     
@@ -22,6 +33,7 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     
     //Set initial volume from slider
     vlcEngine->setVolume(ui->volumeSlider->value());
+    vlcEngine2->setVolume(ui->volumeSlider->value());
 
     //Set initial track info and picture states
     setDefaultTrackPic();
@@ -47,10 +59,17 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     connect(metaPlayer, &QMediaPlayer::metaDataChanged, this, &ZenPlayer::handleMetadataChanged);
     connect(metaPlayer, &QMediaPlayer::mediaStatusChanged, this, &ZenPlayer::handleMetadataChanged);
 
-    //Connect VlcEngine playback signals
+    //Connect VlcEngine playback signals for both engines
     connect(vlcEngine, &VlcEngine::positionChanged, this, &ZenPlayer::on_positionChanged);
     connect(vlcEngine, &VlcEngine::durationChanged, this, &ZenPlayer::on_durationChanged);
     connect(vlcEngine, &VlcEngine::stateChanged, this, &ZenPlayer::onVlcStateChanged);
+
+    connect(vlcEngine2, &VlcEngine::positionChanged, this, &ZenPlayer::on_positionChanged);
+    connect(vlcEngine2, &VlcEngine::durationChanged, this, &ZenPlayer::on_durationChanged);
+    connect(vlcEngine2, &VlcEngine::stateChanged, this, &ZenPlayer::onVlcStateChanged);
+
+    connect(ui->crossfadeSlider, &QSlider::valueChanged, this, &ZenPlayer::on_crossfadeSlider_valueChanged);
+    on_crossfadeSlider_valueChanged(ui->crossfadeSlider->value());
 
     connect(ui->timeSlider, &QSlider::sliderMoved, this, &ZenPlayer::on_timeSlider_sliderMoved);
 
@@ -272,8 +291,10 @@ void ZenPlayer::on_muteButton_clicked()
         mute=true;
 
         ui->volumeSlider->setEnabled(false);
-        if (vlcEngine)
+        if (vlcEngine) 
             vlcEngine->setMuted(true);
+        if (vlcEngine2) 
+            vlcEngine2->setMuted(true);
     }
     else
     {
@@ -283,16 +304,20 @@ void ZenPlayer::on_muteButton_clicked()
         mute=false;
 
         ui->volumeSlider->setEnabled(true);
-        if (vlcEngine)
+        if (vlcEngine) 
             vlcEngine->setMuted(false);
+        if (vlcEngine2) 
+            vlcEngine2->setMuted(false);
     }
 }
 void ZenPlayer::on_volumeSlider_valueChanged(int value)
 {
     volume=value;
 	ui->volumeLabel->setText(QString::number(value));
-    if (vlcEngine)
+    if (vlcEngine) 
         vlcEngine->setVolume(value);
+    if (vlcEngine2) 
+        vlcEngine2->setVolume(value);
 }
 
 // Controls
@@ -364,6 +389,8 @@ void ZenPlayer::on_previousButton_clicked()
     qint64 currentPos=ui->timeSlider->value();
     bool hasNotPlayedOverTwoSecs=(currentPos <= 2000);
 
+    cancelCrossfade();
+
     if (hasNotPlayedOverTwoSecs)
     {
         int prevIndex=currentQueueIndex-1;
@@ -373,8 +400,8 @@ void ZenPlayer::on_previousButton_clicked()
     }
     else
     {
-        if (vlcEngine)
-            vlcEngine->setPosition(0);
+        if (activeEngine)
+            activeEngine->setPosition(0);
         ui->timeSlider->setValue(0);
         ui->currentTimeLabel->setText(formatTime(0));
         if (showRemainingTime)
@@ -385,6 +412,7 @@ void ZenPlayer::on_nextButton_clicked()
 {
     if (playQueue.isEmpty())
         return;
+    cancelCrossfade();
     int nextIndex=currentQueueIndex+1;
     if (nextIndex>=playQueue.size())
         nextIndex=0;
@@ -419,8 +447,10 @@ void ZenPlayer::on_playButton_clicked()
             ui->playButton->setIcon(icon);
             ui->playButton->setToolTip("Play");
             pause=true;
-            if (vlcEngine)
-                vlcEngine->pause();
+            if (activeEngine)
+                activeEngine->pause();
+            if (fadingEngine)
+                fadingEngine->pause();
         }
         else
         {
@@ -428,14 +458,15 @@ void ZenPlayer::on_playButton_clicked()
             ui->playButton->setIcon(icon);
             ui->playButton->setToolTip("Pause");
             pause=false;
-            if (vlcEngine && vlcEngine->state()==VlcEngine::Paused)
-                vlcEngine->resume();
+            if (activeEngine && activeEngine->state()==VlcEngine::Paused)
+                activeEngine->resume();
             else
                 playTrack();
             updateQueueWidget();
         }
     }
 }
+
 void ZenPlayer::on_equalizerButton_clicked()
 {
     equalizerDialog d(this,equalizerPresetIndex);
@@ -513,6 +544,7 @@ void ZenPlayer::saveData()
     for(const auto &v : equalizerCustomValues)
         temp.push_back(std::to_string(v));
     data["equalizerCustomValues"]=temp;
+    data["crossfadeValue"]=ui->crossfadeSlider->value();
     data["showRemainingTime"]=showRemainingTime;
     
     // Save current queue and index
@@ -604,6 +636,13 @@ void ZenPlayer::loadData()
             {
                 showRemainingTime=data["showRemainingTime"];
                 updateMaxTimeLabel();
+            }
+            if (data.contains("crossfadeValue"))
+            {
+                int val=data["crossfadeValue"];
+                QSignalBlocker blocker(ui->crossfadeSlider);
+                ui->crossfadeSlider->setValue(val);
+                on_crossfadeSlider_valueChanged(val);
             }
 
             if (data.contains("folders") && data["folders"].is_array()) 
@@ -1010,17 +1049,38 @@ void ZenPlayer::on_tabWidget_currentChanged(int index)
 }
 
 //playing functions
+void ZenPlayer::cancelCrossfade()
+{
+    if (crossfadeTimer && crossfadeTimer->isActive())
+        crossfadeTimer->stop();
+
+    if (fadingEngine)
+    {
+        fadingEngine->stop();
+        fadingEngine->setSoftwareVolume(0.0f);
+        fadingEngine=nullptr;
+    }
+
+    if (activeEngine)
+        activeEngine->setSoftwareVolume(1.0f);
+
+    isCrossfading=false;
+    crossfadeTriggered=false;
+}
+
 void ZenPlayer::playTrack()
 {
-    if (!vlcEngine) 
+    if (!activeEngine) 
         return;
 
+    cancelCrossfade();
     if (!currentTrackPath.isEmpty())
     {
         if (metaPlayer)
             metaPlayer->setSource(QUrl::fromLocalFile(currentTrackPath));
-        vlcEngine->play(currentTrackPath);
-        applyEqualizerToVlc();
+        activeEngine->setSoftwareVolume(1.0f);
+        activeEngine->play(currentTrackPath);
+        applyEqualizerToVlc(activeEngine);
     }
 }
 void ZenPlayer::handleMetadataChanged()
@@ -1071,8 +1131,15 @@ void ZenPlayer::handleMetadataChanged()
 
 void ZenPlayer::onVlcStateChanged(VlcEngine::State newState)
 {
+    VlcEngine* senderEng=qobject_cast<VlcEngine*>(sender());
+    if (senderEng && senderEng != activeEngine)
+        return;
+
     if (newState==VlcEngine::Ended)
     {
+        if (isCrossfading)
+            return;
+
         if (repeat)
             playTrack();
         else
@@ -1080,24 +1147,131 @@ void ZenPlayer::onVlcStateChanged(VlcEngine::State newState)
     }
 }
 
-void ZenPlayer::applyEqualizerToVlc()
+void ZenPlayer::applyEqualizerToVlc(VlcEngine* targetEngine)
 {
-    if (!vlcEngine)
+    auto applyTo=[this](VlcEngine* eng) 
+    {
+        if (!eng) 
+            return;
+        if (equalizerPresetIndex==0) 
+        {
+            eng->resetEqualizer();
+            return;
+        }
+        if (equalizerCurrentValues.size() >= 11) 
+        {
+            float preampDb=equalizerCurrentValues[0]/10.0f;
+            float bandDbs[10];
+            for (int i=0; i<10; i++)
+                bandDbs[i]=equalizerCurrentValues[i+1]/10.0f;
+            eng->applyEqualizer(preampDb, bandDbs, 10);
+        }
+    };
+
+    if (targetEngine)
+        applyTo(targetEngine);
+    else 
+    {
+        applyTo(vlcEngine);
+        applyTo(vlcEngine2);
+    }
+}
+
+void ZenPlayer::checkTriggerCrossfade(qint64 positionMs)
+{
+    if (crossfadeTriggered || isCrossfading)
         return;
 
-    if (equalizerPresetIndex==0) // Flat
+    int sliderVal=ui->crossfadeSlider->value();
+    if (sliderVal <= 0)
+        return;
+
+    if (!activeEngine || !activeEngine->isPlaying())
+        return;
+
+    qint64 durMs=activeEngine->duration();
+    if (durMs <= 1000)
+        return;
+
+    qint64 requestedFadeMs=sliderVal*100;
+    qint64 fadeMs=qMin(requestedFadeMs, durMs/2);
+    qint64 remainingMs=durMs-positionMs;
+
+    if (remainingMs>0 && remainingMs<=fadeMs)
     {
-        vlcEngine->resetEqualizer();
+        if (playQueue.isEmpty())
+            return;
+
+        int nextIndex=-1;
+        if (repeat)
+            nextIndex=currentQueueIndex;
+        else
+        {
+            if (currentQueueIndex+1 < playQueue.size())
+                nextIndex=currentQueueIndex+1;
+            else
+                nextIndex=0;
+        }
+
+        if (nextIndex<0 || nextIndex>=playQueue.size())
+            return;
+
+        startCrossfadeTo(nextIndex, fadeMs);
+    }
+}
+
+void ZenPlayer::startCrossfadeTo(int nextIndex, qint64 fadeMs)
+{
+    crossfadeTriggered=true;
+    isCrossfading=true;
+    crossfadeDurationMs=static_cast<int>(fadeMs);
+    crossfadeElapsedMs=0;
+    fadingEngine=activeEngine;
+    activeEngine=(activeEngine==vlcEngine) ? vlcEngine2 : vlcEngine;
+    fadingEngine->setSoftwareVolume(1.0f);
+    activeEngine->setSoftwareVolume(0.0f);
+    activeEngine->setVolume(volume);
+    applyEqualizerToVlc(activeEngine);
+    currentQueueIndex=nextIndex;
+    currentTrackPath=playQueue[currentQueueIndex];
+    updateQueueWidget();
+    if (currentQueueIndex>=0 && currentQueueIndex < ui->queueListWidget->count())
+        ui->queueListWidget->setCurrentRow(currentQueueIndex);
+
+    if (metaPlayer)
+        metaPlayer->setSource(QUrl::fromLocalFile(currentTrackPath));
+
+    activeEngine->play(currentTrackPath);
+    crossfadeTimer->start(20);
+}
+
+void ZenPlayer::onCrossfadeTimerTimeout()
+{
+    if (!isCrossfading || !fadingEngine || !activeEngine)
+    {
+        crossfadeTimer->stop();
+        isCrossfading=false;
         return;
     }
 
-    if (equalizerCurrentValues.size() >= 11)
+    crossfadeElapsedMs+=20;
+    float progress=static_cast<float>(crossfadeElapsedMs)/crossfadeDurationMs;
+
+    if (progress >= 1.0f)
     {
-        float preampDb=equalizerCurrentValues[0]/10.0f;
-        float bandDbs[10];
-        for (int i=0; i<10; i++)
-            bandDbs[i]=equalizerCurrentValues[i+1]/10.0f;
-        vlcEngine->applyEqualizer(preampDb, bandDbs, 10);
+        progress=1.0f;
+        fadingEngine->setSoftwareVolume(0.0f);
+        fadingEngine->stop();
+        activeEngine->setSoftwareVolume(1.0f);
+        crossfadeTimer->stop();
+        isCrossfading=false;
+        fadingEngine=nullptr;
+        crossfadeTriggered=false;
+    }
+    else
+    {
+        fadingEngine->setSoftwareVolume(1.0f - progress);
+        activeEngine->setSoftwareVolume(progress);
     }
 }
 
@@ -1147,33 +1321,38 @@ QPixmap ZenPlayer::getRoundedPixmap(const QPixmap& src, int radius)
 }
 void ZenPlayer::on_positionChanged(qint64 position)
 {
+    VlcEngine* senderEng=qobject_cast<VlcEngine*>(sender());
+    if (senderEng && senderEng != activeEngine)
+        return;
+
     if (!ui->timeSlider->isSliderDown())
         ui->timeSlider->setValue(position);
     ui->currentTimeLabel->setText(formatTime(position));
     if (showRemainingTime)
         updateMaxTimeLabel();
+
+    checkTriggerCrossfade(position);
 }
 void ZenPlayer::on_durationChanged(qint64 duration)
 {
+    VlcEngine* senderEng=qobject_cast<VlcEngine*>(sender());
+    if (senderEng && senderEng != activeEngine)
+        return;
+
     ui->timeSlider->setRange(0, duration);
     updateMaxTimeLabel();
 }
 void ZenPlayer::on_timeSlider_sliderMoved(int position)
 {
-    if (vlcEngine)
-        vlcEngine->setPosition(position);
+    if (activeEngine)
+        activeEngine->setPosition(position);
     ui->currentTimeLabel->setText(formatTime(position));
     if (showRemainingTime)
         updateMaxTimeLabel();
 }
-void ZenPlayer::on_sortComboBox_currentIndexChanged()
-{
-    sortTracks();
-}
-void ZenPlayer::on_orderComboBox_currentIndexChanged()
-{
-    sortTracks();
-}
+
+void ZenPlayer::on_sortComboBox_currentIndexChanged() { sortTracks(); }
+void ZenPlayer::on_orderComboBox_currentIndexChanged() { sortTracks(); }
 
 void ZenPlayer::sortTracks()
 {
@@ -1296,12 +1475,11 @@ void ZenPlayer::playTrackAtIndex(int index)
 {
     if (index>=0 && index<playQueue.size())
     {
+        cancelCrossfade();
         currentQueueIndex=index;
         currentTrackPath=playQueue.at(index);
-        
         playTrack();
         updateQueueWidget();
-        
         QIcon icon(":/pics/pics/pause.png");
         ui->playButton->setIcon(icon);
         ui->playButton->setToolTip("Pause");
@@ -1321,10 +1499,8 @@ void ZenPlayer::showQueueContextMenu(const QPoint &pos)
     if (!item) 
         return;
     ui->queueListWidget->setCurrentItem(item);
-
     QMenu menu(this);
     QAction* removeAction=menu.addAction("Remove from Queue");
-
     QAction* selectedAction=menu.exec(QCursor::pos());
     if (selectedAction==removeAction)
     {
@@ -1334,7 +1510,6 @@ void ZenPlayer::showQueueContextMenu(const QPoint &pos)
             QString removedTrack=playQueue.at(index);
             playQueue.removeAt(index);
             originalQueue.removeOne(removedTrack);
-
             if (playQueue.isEmpty())
             {
                 currentQueueIndex=-1;
