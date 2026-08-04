@@ -16,6 +16,8 @@ qt_add_executable(ZenPlayer
     ZenPlayer.ui
     ZenPlayer.cpp
     ZenPlayer.qrc
+    VlcEngine.h
+    VlcEngine.cpp
     ClickableSlider.h
     equalizerDialog.h
     equalizerDialog.ui
@@ -24,8 +26,6 @@ qt_add_executable(ZenPlayer
     createPlaylistDialog.h
     createPlaylistDialog.ui
     resource.rc
-    VlcPlayer.h
-    VlcPlayer.cpp
 )
 
 set_target_properties(ZenPlayer PROPERTIES

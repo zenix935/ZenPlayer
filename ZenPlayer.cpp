@@ -19,7 +19,7 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     loadData();
     
     //Set initial volume from slider
-    audioOutput->setVolume(ui->volumeSlider->value() / 100.0);
+    audioOutput->setVolume(ui->volumeSlider->value()/100.0);
 
     //Set initial track info and picture states
     setDefaultTrackPic();
@@ -848,7 +848,7 @@ void ZenPlayer::playTrack()
 }
 void ZenPlayer::handleMetadataChanged()
 {
-    if (player->mediaStatus() == QMediaPlayer::EndOfMedia)
+    if (player->mediaStatus()==QMediaPlayer::EndOfMedia)
     {
         if (repeat)
             playTrack();
