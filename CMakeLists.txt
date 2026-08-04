@@ -52,7 +52,7 @@ endif()
 
 if(UNIX AND NOT APPLE)
     install(TARGETS ZenPlayer DESTINATION bin)
-    install(FILES pics/icon.png DESTINATION share/pixmaps RENAME zenplayer.png)
+    install(FILES pics/icon.ico DESTINATION share/pixmaps RENAME zenplayer.png)
     install(FILES zenplayer.desktop DESTINATION share/applications)
 elseif(APPLE)
     install(TARGETS ZenPlayer BUNDLE DESTINATION .)

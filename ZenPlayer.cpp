@@ -10,7 +10,7 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     currentQueueIndex=-1;
     volume=50;
     ui->setupUi(this);
-	setWindowIcon(QIcon(":/pics/pics/icon.png"));
+	setWindowIcon(QIcon(":/pics/pics/icon.ico"));
 
     vlcEngine=new VlcEngine(this);
     if (!vlcEngine->init(""))
