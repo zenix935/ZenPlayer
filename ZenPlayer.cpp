@@ -58,6 +58,8 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     connect(ui->tracksListWidget, &QListWidget::itemDoubleClicked, this, &ZenPlayer::on_tracksListWidget_itemDoubleClicked);
     connect(ui->sortComboBox, &QComboBox::currentIndexChanged, this, &ZenPlayer::on_sortComboBox_currentIndexChanged);
     connect(ui->orderComboBox, &QComboBox::currentIndexChanged, this, &ZenPlayer::on_orderComboBox_currentIndexChanged);
+    connect(ui->searchPushButton, &QPushButton::clicked, this, &ZenPlayer::on_searchPushButton_clicked);
+    connect(ui->searchLineEdit, &QLineEdit::returnPressed, this, &ZenPlayer::on_searchPushButton_clicked);
 
     //Setup custom delegate for tracksListWidget with play button on hover
     TrackItemDelegate* trackDelegate=new TrackItemDelegate(ui->tracksListWidget);
@@ -899,6 +901,85 @@ void ZenPlayer::showTracksContextMenu(const QPoint &pos)
             trackPaths.removeAt(index);
         }
     }
+}
+
+// search function
+void ZenPlayer::on_searchPushButton_clicked()
+{
+    QString query=ui->searchLineEdit->text().trimmed();
+    searchTrackPaths.clear();
+
+    QSet<QString> candidateSet;
+    
+    for (const auto& folderpath : folderPaths)
+    {
+        QDir directory(folderpath);
+        QStringList musicFiles=directory.entryList(QStringList()<<"*.mp3"<<"*.wav"<<"*.flac", QDir::Files);
+        for (const auto& file : musicFiles)
+        {
+            QString fullPath=folderpath+'/'+file;
+            candidateSet.insert(fullPath);
+        }
+    }
+
+    if (data.contains("playlists") && data["playlists"].is_array())
+        for (const auto& playlist : data["playlists"])
+            if (playlist.contains("tracks") && playlist["tracks"].is_array())
+                for (const auto& track : playlist["tracks"])
+                    candidateSet.insert(QString::fromStdString(track));
+
+    for (const auto& path : trackPaths)
+        candidateSet.insert(path);
+
+    if (!query.isEmpty())
+    {
+        for (const auto& trackPath : candidateSet)
+        {
+            QFileInfo fileInfo(trackPath);
+            if (fileInfo.completeBaseName().contains(query, Qt::CaseInsensitive) || trackPath.contains(query, Qt::CaseInsensitive))
+                searchTrackPaths.append(trackPath);
+        }
+        trackPaths=searchTrackPaths;
+    }
+    else
+    {
+        if (ui->tabWidget->currentIndex()==0) //folders tab
+        {
+            QListWidgetItem* currentItem=ui->foldersListWidget->currentItem();
+            if (currentItem)
+            {
+                int index=ui->foldersListWidget->row(currentItem);
+                QString folderpath=folderPaths.at(index);
+                QDir directory(folderpath);
+                QStringList musicFiles=directory.entryList(QStringList()<<"*.mp3"<<"*.wav"<<"*.flac",QDir::Files);
+                trackPaths.clear();
+                for(const auto& file:musicFiles)
+                {
+                    QString fullPath=folderpath+'/'+file;
+                    trackPaths.append(fullPath);
+                }
+            }
+        }
+        else if (ui->tabWidget->currentIndex()==1) //playlists tab
+        {
+            QListWidgetItem* currentItem=ui->playlistListWidget->currentItem();
+            if (currentItem)
+            {
+                int index=ui->playlistListWidget->row(currentItem);
+                trackPaths.clear();
+                for(const auto& track:data["playlists"][index]["tracks"])
+                    trackPaths.append(QString::fromStdString(track));
+            }
+        }
+    }
+
+    ui->tracksListWidget->clear();
+    for (const auto& path : trackPaths)
+    {
+        QFileInfo fileInfo(path);
+        ui->tracksListWidget->addItem(fileInfo.completeBaseName());
+    }
+    sortTracks();
 }
 
 //tab function

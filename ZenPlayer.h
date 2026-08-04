@@ -1,5 +1,6 @@
 #include <QDir>
 #include <QUrl>
+#include <QSet>
 #include <QMenu>
 #include <QPoint>
 #include <QCursor>
@@ -84,6 +85,7 @@ private slots:
    void on_queueListWidget_itemClicked(QListWidgetItem* item);
    void showQueueContextMenu(const QPoint &pos);
    void onVlcStateChanged(VlcEngine::State newState);
+   void on_searchPushButton_clicked();
 
 private:  
    Ui::ZenPlayerClass* ui;
@@ -95,6 +97,7 @@ private:
    json data;
    QList<QString> folderPaths;
    QList<QString> trackPaths;
+   QList<QString> searchTrackPaths;
    QList<QString> playQueue;
    QList<QString> originalQueue;
    QString currentTrackPath;
