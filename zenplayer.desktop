@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=ZenPlayer
+Comment=Modern C++ Qt6 Music Player powered by libVLC
+Exec=ZenPlayer
+Icon=zenplayer
+Categories=AudioVideo;Audio;Player;Qt;
+Terminal=false
+StartupWMClass=ZenPlayer

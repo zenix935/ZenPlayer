@@ -24,10 +24,6 @@
 
 *.sh
 
-*.plist
-
-*.desktop
-
 PKGBUILD
 
 build/
