@@ -1,5 +1,4 @@
 #include "VlcEngine.h"
-#include "VlcEngine.moc"
 #include <QDir>
 #include <QFile>
 #include <QDebug>
@@ -183,32 +182,60 @@ bool VlcEngine::init(const QString& vlcLibPath)
     if (!vlcLibPath.isEmpty())
         candidates<<vlcLibPath;
     candidates<<QCoreApplication::applicationDirPath();
+#ifdef _WIN32
     candidates<<"C:/Program Files/VideoLAN/VLC";
     candidates<<"C:/Program Files (x86)/VideoLAN/VLC";
+    static const QStringList libNames={"libvlc.dll"};
+#elif defined(__APPLE__)
+    candidates<<"/Applications/VLC.app/Contents/MacOS/lib";
+    candidates<<"/usr/local/lib";
+    candidates<<"/opt/homebrew/lib";
+    static const QStringList libNames={"libvlc.dylib", "libvlc.5.dylib"};
+#else
+    candidates<<"/usr/lib/x86_64-linux-gnu"<<"/usr/lib"<<"/usr/local/lib"<<"/usr/lib64"<<"/usr/lib/aarch64-linux-gnu";
+    static const QStringList libNames={"libvlc.so.5", "libvlc.so.12", "libvlc.so"};
+#endif
 
     QString dllDir;
+    QString targetLibName;
     for (const QString& dir : candidates)
     {
-        if (QFile::exists(QDir(dir).absoluteFilePath("libvlc.dll")))
+        for (const QString& libName : libNames)
         {
-            dllDir=dir;
-            break;
+            if (QFile::exists(QDir(dir).absoluteFilePath(libName)))
+            {
+                dllDir=dir;
+                targetLibName=libName;
+                break;
+            }
         }
+        if (!dllDir.isEmpty()) 
+            break;
     }
 
+    // On Linux/Unix, if not found in candidate paths, try system default load
     if (dllDir.isEmpty())
     {
-        qWarning()<<"[VlcEngine] Could not find libvlc.dll in candidate paths.";
-        return false;
+        #ifndef _WIN32
+        m_lib.setFileName("vlc");
+        if (!m_lib.load())
+            m_lib.setFileName("libvlc.so.5");
+        #endif
+        if (!m_lib.isLoaded() && !m_lib.load())
+        {
+            qWarning()<<"[VlcEngine] Could not find libvlc in candidate paths or system library path.";
+            return false;
+        }
     }
-
-    // Load libvlc.dll
-    QString dllPath=QDir(dllDir).absoluteFilePath("libvlc.dll");
-    m_lib.setFileName(dllPath);
-    if (!m_lib.load())
+    else
     {
-        qWarning()<<"[VlcEngine] Failed to load"<<dllPath<<": "<<m_lib.errorString();
-        return false;
+        QString dllPath=QDir(dllDir).absoluteFilePath(targetLibName);
+        m_lib.setFileName(dllPath);
+        if (!m_lib.load())
+        {
+            qWarning()<<"[VlcEngine] Failed to load"<<dllPath<<": "<<m_lib.errorString();
+            return false;
+        }
     }
 
     if (!resolveFunctions())
@@ -615,3 +642,5 @@ void VlcEngine::setState(State s)
         emit stateChanged(s);
     }
 }
+
+#include "VlcEngine.moc"

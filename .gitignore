@@ -20,13 +20,21 @@
 
 *.zip
 
+*.py
+
+*.sh
+
+*.plist
+
+*.desktop
+
+PKGBUILD
+
 build/
 
-release_dist/
+dist/
 
-build_vs.bat
-
-deploy.bat
+*.bat
 
 *.json
 

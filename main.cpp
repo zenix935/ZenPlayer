@@ -1,4 +1,6 @@
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 #include "ZenPlayer.h"
 
 int main(int argc,char *argv[])
