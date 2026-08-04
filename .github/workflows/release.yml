@@ -32,7 +32,7 @@ jobs:
         with:
           version: '6.6.2'
           target: 'desktop'
-          modules: 'qtmultimedia,qtcore,qtgui,qtwidgets'
+          modules: 'qtmultimedia'
 
       # ==========================================
       # 1. WINDOWS BUILD & DEPLOY
