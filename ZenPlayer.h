@@ -81,6 +81,7 @@ private slots:
    void sortTracks();
    
    void on_queueListWidget_itemClicked(QListWidgetItem* item);
+   void showQueueContextMenu(const QPoint &pos);
    void onVlcStateChanged(VlcEngine::State newState);
 
 private:  

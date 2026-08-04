@@ -31,11 +31,13 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     ui->foldersListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->playlistListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->tracksListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->queueListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
     //Connect context menu signals to slots
     connect(ui->foldersListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showFoldersContextMenu);
     connect(ui->playlistListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showPlaylistsContextMenu);
     connect(ui->tracksListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showTracksContextMenu);
+    connect(ui->queueListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showQueueContextMenu);
 
     //Connect QMediaPlayer metadata signals
     connect(metaPlayer, &QMediaPlayer::metaDataChanged, this, &ZenPlayer::handleMetadataChanged);
@@ -114,6 +116,23 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
             showFoldersContextMenu(visualRect.center());
         }
     });
+
+    //Setup custom delegate for queueListWidget with 3-dot menu on hover
+    ListItemDelegate* queueDelegate=new ListItemDelegate(ui->queueListWidget);
+    ui->queueListWidget->setItemDelegate(queueDelegate);
+    ui->queueListWidget->setMouseTracking(true);
+    ui->queueListWidget->viewport()->setAttribute(Qt::WA_Hover, true);
+    ui->queueListWidget->viewport()->installEventFilter(this);
+
+    connect(queueDelegate, &ListItemDelegate::menuClicked, this, [this](const QModelIndex &index) 
+    {
+        QListWidgetItem* item=ui->queueListWidget->item(index.row());
+        if (item) 
+        {
+            QRect visualRect=ui->queueListWidget->visualRect(index);
+            showQueueContextMenu(visualRect.center());
+        }
+    });
 }
 
 bool ZenPlayer::eventFilter(QObject* watched, QEvent* event)
@@ -189,6 +208,29 @@ bool ZenPlayer::eventFilter(QObject* watched, QEvent* event)
         {
             ui->foldersListWidget->viewport()->setCursor(Qt::ArrowCursor);
             ui->foldersListWidget->viewport()->update();
+        }
+    }
+    if (ui && watched==ui->queueListWidget->viewport()) 
+    {
+        if (event->type()==QEvent::MouseMove || event->type()==QEvent::HoverMove) 
+        {
+            QMouseEvent* me=static_cast<QMouseEvent*>(event);
+            QModelIndex index=ui->queueListWidget->indexAt(me->pos());
+            bool isHand=false;
+            if (index.isValid()) 
+            {
+                QRect rect=ui->queueListWidget->visualRect(index);
+                QRect menuRect=ListItemDelegate::menuBtnRect(rect, ui->queueListWidget->viewport()->width());
+                if (menuRect.contains(me->pos()))
+                    isHand=true;
+            }
+            ui->queueListWidget->viewport()->setCursor(isHand ? Qt::PointingHandCursor : Qt::ArrowCursor);
+            ui->queueListWidget->viewport()->update();
+        }
+        else if (event->type()==QEvent::Leave)
+        {
+            ui->queueListWidget->viewport()->setCursor(Qt::ArrowCursor);
+            ui->queueListWidget->viewport()->update();
         }
     }
     return QMainWindow::eventFilter(watched, event);
@@ -1143,4 +1185,45 @@ void ZenPlayer::on_queueListWidget_itemClicked(QListWidgetItem* item)
     int index=ui->queueListWidget->row(item);
     qDebug()<<index;
     playTrackAtIndex(index);
+}
+
+void ZenPlayer::showQueueContextMenu(const QPoint &pos)
+{
+    QListWidgetItem* item=ui->queueListWidget->itemAt(pos);
+    if (!item) 
+        return;
+    ui->queueListWidget->setCurrentItem(item);
+
+    QMenu menu(this);
+    QAction* removeAction=menu.addAction("Remove from Queue");
+
+    QAction* selectedAction=menu.exec(QCursor::pos());
+    if (selectedAction==removeAction)
+    {
+        int index=ui->queueListWidget->row(item);
+        if (index>=0 && index<playQueue.size())
+        {
+            QString removedTrack=playQueue.at(index);
+            playQueue.removeAt(index);
+            originalQueue.removeOne(removedTrack);
+
+            if (playQueue.isEmpty())
+            {
+                currentQueueIndex=-1;
+                currentTrackPath="";
+            }
+            else
+            {
+                if (index<currentQueueIndex)
+                    currentQueueIndex--;
+                else if (index==currentQueueIndex)
+                {
+                    if (currentQueueIndex>=playQueue.size())
+                        currentQueueIndex=playQueue.size()-1;
+                    currentTrackPath=playQueue.at(currentQueueIndex);
+                }
+            }
+            updateQueueWidget();
+        }
+    }
 }

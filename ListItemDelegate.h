@@ -104,9 +104,10 @@ public:
         QString text=index.data(Qt::DisplayRole).toString();
 
         QColor textColor=opt.palette.text().color();
-        if (opt.state & QStyle::State_Selected)
-            textColor=opt.palette.highlightedText().color();
-
+        QVariant fg=index.data(Qt::ForegroundRole);
+        if (fg.isValid() && fg.canConvert<QBrush>())
+            textColor=fg.value<QBrush>().color();
+            
         painter->setPen(textColor);
         painter->setFont(opt.font);
 
