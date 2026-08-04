@@ -22,6 +22,7 @@
 #include "json.hpp"
 #include "VlcEngine.h"
 #include "ui_ZenPlayer.h"
+#include "ClickableSlider.h"
 #include "equalizerDialog.h"
 #include "ListItemDelegate.h"
 #include "TrackItemDelegate.h"
