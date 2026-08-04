@@ -27,6 +27,10 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     setDefaultTrackPic();
     ui->trackInfoLabel->setText("No Song Playing");
 
+    //Install event filter for maxTimeLabel click toggle
+    ui->maxTimeLabel->installEventFilter(this);
+    ui->maxTimeLabel->setCursor(Qt::PointingHandCursor);
+
     //Enable custom context menus
     ui->foldersListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->playlistListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -231,6 +235,19 @@ bool ZenPlayer::eventFilter(QObject* watched, QEvent* event)
         {
             ui->queueListWidget->viewport()->setCursor(Qt::ArrowCursor);
             ui->queueListWidget->viewport()->update();
+        }
+    }
+    if (ui && watched==ui->maxTimeLabel)
+    {
+        if (event->type()==QEvent::MouseButtonRelease)
+        {
+            QMouseEvent* me=static_cast<QMouseEvent*>(event);
+            if (me->button()==Qt::LeftButton)
+            {
+                showRemainingTime=!showRemainingTime;
+                updateMaxTimeLabel();
+                return true;
+            }
         }
     }
     return QMainWindow::eventFilter(watched, event);
@@ -474,6 +491,7 @@ void ZenPlayer::saveData()
     for(const auto &v : equalizerCustomValues)
         temp.push_back(std::to_string(v));
     data["equalizerCustomValues"]=temp;
+    data["showRemainingTime"]=showRemainingTime;
     
     // Save current queue and index
     temp.clear();
@@ -559,6 +577,11 @@ void ZenPlayer::loadData()
                 equalizerCustomValues.clear();
                 for(const std::string& value:data["equalizerCustomValues"])
                     equalizerCustomValues.push_back(std::stoi(value));
+            }
+            if (data.contains("showRemainingTime"))
+            {
+                showRemainingTime=data["showRemainingTime"];
+                updateMaxTimeLabel();
             }
 
             if (data.contains("folders") && data["folders"].is_array()) 
@@ -1026,17 +1049,21 @@ void ZenPlayer::on_positionChanged(qint64 position)
     if (!ui->timeSlider->isSliderDown())
         ui->timeSlider->setValue(position);
     ui->currentTimeLabel->setText(formatTime(position));
+    if (showRemainingTime)
+        updateMaxTimeLabel();
 }
 void ZenPlayer::on_durationChanged(qint64 duration)
 {
     ui->timeSlider->setRange(0, duration);
-    ui->maxTimeLabel->setText(formatTime(duration));
+    updateMaxTimeLabel();
 }
 void ZenPlayer::on_timeSlider_sliderMoved(int position)
 {
     if (vlcEngine)
         vlcEngine->setPosition(position);
     ui->currentTimeLabel->setText(formatTime(position));
+    if (showRemainingTime)
+        updateMaxTimeLabel();
 }
 void ZenPlayer::on_sortComboBox_currentIndexChanged()
 {
@@ -1226,4 +1253,17 @@ void ZenPlayer::showQueueContextMenu(const QPoint &pos)
             updateQueueWidget();
         }
     }
+}
+
+void ZenPlayer::updateMaxTimeLabel()
+{
+    qint64 duration=ui->timeSlider->maximum();
+    if (showRemainingTime)
+    {
+        qint64 position=ui->timeSlider->value();
+        qint64 remaining=qMax<qint64>(0, duration - position);
+        ui->maxTimeLabel->setText("-" + formatTime(remaining));
+    }
+    else
+        ui->maxTimeLabel->setText(formatTime(duration));
 }

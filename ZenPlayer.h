@@ -89,6 +89,7 @@ private:
    VlcEngine* vlcEngine;
    QMediaPlayer* metaPlayer;
    bool mute,repeat,shuffle,pause,isFolder;
+   bool showRemainingTime=false;
    int volume;
    json data;
    QList<QString> folderPaths;
@@ -105,6 +106,7 @@ private:
    void setDefaultTrackPic();
    QPixmap getRoundedPixmap(const QPixmap& src, int radius);
    QString formatTime(qint64 ms);
+   void updateMaxTimeLabel();
    void buildQueueFromCurrentTracks();
    void updateQueueWidget();
    void playTrackAtIndex(int index);
