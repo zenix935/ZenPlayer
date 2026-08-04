@@ -8,6 +8,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Multimedia)
 
 qt_add_executable(ZenPlayer
@@ -26,6 +28,11 @@ qt_add_executable(ZenPlayer
     createPlaylistDialog.h
     createPlaylistDialog.ui
     resource.rc
+)
+
+target_include_directories(ZenPlayer PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set_target_properties(ZenPlayer PROPERTIES
