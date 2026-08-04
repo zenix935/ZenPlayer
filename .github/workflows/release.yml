@@ -32,6 +32,7 @@ jobs:
         with:
           version: '6.6.2'
           target: 'desktop'
+          modules: 'qtmultimedia,qtcore,qtgui,qtwidgets'
 
       # ==========================================
       # 1. WINDOWS BUILD & DEPLOY
@@ -71,13 +72,12 @@ jobs:
       - name: Build & Package (macOS)
         if: matrix.platform == 'macOS'
         run: |
-          mkdir build && cd build
-          cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ..
-          cmake --build .
+          cmake -B build -S . -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$Qt6_DIR"
+          cmake --build build
           
-          # Deploy Qt libraries into .app bundle
-          macdeployqt MusicPlayer.app -dmg
-          mv MusicPlayer.dmg ../${{ matrix.artifact_name }}
+          # Deploy Qt dependencies and bundle into DMG
+          macdeployqt build/MusicPlayer.app -dmg
+          mv build/MusicPlayer.dmg ${{ matrix.artifact_name }}
 
       # ==========================================
       # 3. LINUX BUILD & DEPLOY (AppImage)
@@ -96,14 +96,14 @@ jobs:
       - name: Build & Package (Linux AppImage)
         if: matrix.platform == 'linux'
         run: |
-          mkdir build && cd build
-          cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
-          cmake --build .
-          DESTDIR=AppDir cmake --install .
+          # Configure, build, and install into AppDir
+          cmake -B build -S . -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build
+          DESTDIR=build/AppDir cmake --install build
           
-          # Bundle Qt and libVLC into standalone AppImage
-          ../linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
-          mv MusicPlayer-x86_64.AppImage ../${{ matrix.artifact_name }}
+          # Generate AppImage
+          ./linuxdeploy-x86_64.AppImage --appdir build/AppDir --plugin qt --output appimage
+          mv *-x86_64.AppImage ${{ matrix.artifact_name }}
 
       # ==========================================
       # 4. UPLOAD TO GITHUB RELEASES
