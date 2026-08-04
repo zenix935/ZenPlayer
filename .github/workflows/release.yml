@@ -19,7 +19,7 @@ jobs:
           - os: macos-14 # Apple Silicon (M1/M2/M3)
             platform: macos
             artifact_name: MusicPlayer-macOS.dmg
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             platform: linux
             artifact_name: MusicPlayer-Linux.AppImage
 
@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Qt
-        uses: jurplel/install-qt@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: '6.6.2'
           host: 'desktop'
