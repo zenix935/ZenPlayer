@@ -13,13 +13,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: windows
+          - os: windows-latest
             platform: windows
             artifact_name: MusicPlayer-Windows.zip
-          - os: mac # Apple Silicon (M1/M2/M3)
+          - os: macos-latest # Apple Silicon (M1/M2/M3)
             platform: macos
             artifact_name: MusicPlayer-macOS.dmg
-          - os: linux
+          - os: ubuntu-latest
             platform: linux
             artifact_name: MusicPlayer-Linux.AppImage
 
