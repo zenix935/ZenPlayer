@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(ZenPlayer VERSION 1.2 LANGUAGES CXX)
+project(ZenPlayer VERSION 2.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -61,7 +61,7 @@ endif()
 set(CPACK_PACKAGE_NAME "ZenPlayer")
 set(CPACK_PACKAGE_VENDOR "ZenPlayer")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Modern C++ Qt6 Music Player powered by libVLC")
-set(CPACK_PACKAGE_VERSION "1.2")
+set(CPACK_PACKAGE_VERSION "2.0.0")
 set(CPACK_PACKAGE_CONTACT "zenplayer@example.com")
 
 if(APPLE)
