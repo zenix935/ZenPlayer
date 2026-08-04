@@ -46,20 +46,24 @@ jobs:
         if: matrix.platform == 'windows'
         shell: cmd
         run: |
-          mkdir build && cd build
-          cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ..
-          cmake --build . --config Release
+          # 1. Configure and Build
+          cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release
           
-          :: Deploy Qt dependencies
-          windeployqt release/MusicPlayer.exe --no-compiler-runtime
+          # 2. Install executable into a staging directory
+          cmake --install build --prefix release_stage
           
-          :: Copy libVLC binaries to release folder
-          xcopy /E /I "C:\Program Files\VideoLAN\VLC\plugins" "release\plugins"
-          copy "C:\Program Files\VideoLAN\VLC\libvlc.dll" "release\"
-          copy "C:\Program Files\VideoLAN\VLC\libvlccore.dll" "release\"
+          # 3. Run windeployqt on the installed executable
+          # Adjust the name below if your output executable has a different name
+          windeployqt release_stage/bin/ZenPlayer.exe --no-compiler-runtime
           
-          :: Zip the folder
-          powershell Compress-Archive -Path release\* -DestinationPath ../${{ matrix.artifact_name }}
+          # 4. Copy libVLC binaries next to the executable
+          xcopy /E /I "C:\Program Files\VideoLAN\VLC\plugins" "release_stage\bin\plugins"
+          copy "C:\Program Files\VideoLAN\VLC\libvlc.dll" "release_stage\bin\"
+          copy "C:\Program Files\VideoLAN\VLC\libvlccore.dll" "release_stage\bin\"
+          
+          # 5. Compress everything inside release_stage/bin/
+          powershell Compress-Archive -Path release_stage\bin\* -DestinationPath ${{ matrix.artifact_name }}
 
       # ==========================================
       # 2. MACOS BUILD & DEPLOY
