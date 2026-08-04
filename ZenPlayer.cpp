@@ -493,6 +493,10 @@ void ZenPlayer::on_equalizerButton_clicked()
         applyEqualizerToVlc();
     }
 }
+void ZenPlayer::on_crossfadeSlider_valueChanged(int value)
+{
+    ui->crossfadeValueLabel->setText(QString::number(value/10.0, 'f', 1)+"s");
+}
 
 //save and load
 void ZenPlayer::saveData()

@@ -53,6 +53,7 @@ private slots:
    void on_nextButton_clicked();
    void on_playButton_clicked();
    void on_equalizerButton_clicked();
+   void on_crossfadeSlider_valueChanged(int value);
 
    void on_sortComboBox_currentIndexChanged();
    void on_orderComboBox_currentIndexChanged();
