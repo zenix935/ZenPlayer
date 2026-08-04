@@ -12,14 +12,16 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     ui->setupUi(this);
 	setWindowIcon(QIcon(":/pics/pics/icon.png"));
 
-    player=new QMediaPlayer(this);
-    audioOutput=new QAudioOutput(this);
-    player->setAudioOutput(audioOutput);
+    vlcEngine=new VlcEngine(this);
+    if (!vlcEngine->init(""))
+        qWarning()<<"[ZenPlayer] Failed to initialize VlcEngine";
+
+    metaPlayer=new QMediaPlayer(this);
     
     loadData();
     
     //Set initial volume from slider
-    audioOutput->setVolume(ui->volumeSlider->value()/100.0);
+    vlcEngine->setVolume(ui->volumeSlider->value());
 
     //Set initial track info and picture states
     setDefaultTrackPic();
@@ -35,11 +37,15 @@ ZenPlayer::ZenPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::ZenPlaye
     connect(ui->playlistListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showPlaylistsContextMenu);
     connect(ui->tracksListWidget, &QListWidget::customContextMenuRequested, this, &ZenPlayer::showTracksContextMenu);
 
-    //Connect QMediaPlayer signals
-    connect(player, &QMediaPlayer::metaDataChanged, this, &ZenPlayer::handleMetadataChanged);
-    connect(player, &QMediaPlayer::mediaStatusChanged, this, &ZenPlayer::handleMetadataChanged);
-    connect(player, &QMediaPlayer::positionChanged, this, &ZenPlayer::on_positionChanged);
-    connect(player, &QMediaPlayer::durationChanged, this, &ZenPlayer::on_durationChanged);
+    //Connect QMediaPlayer metadata signals
+    connect(metaPlayer, &QMediaPlayer::metaDataChanged, this, &ZenPlayer::handleMetadataChanged);
+    connect(metaPlayer, &QMediaPlayer::mediaStatusChanged, this, &ZenPlayer::handleMetadataChanged);
+
+    //Connect VlcEngine playback signals
+    connect(vlcEngine, &VlcEngine::positionChanged, this, &ZenPlayer::on_positionChanged);
+    connect(vlcEngine, &VlcEngine::durationChanged, this, &ZenPlayer::on_durationChanged);
+    connect(vlcEngine, &VlcEngine::stateChanged, this, &ZenPlayer::onVlcStateChanged);
+
     connect(ui->timeSlider, &QSlider::sliderMoved, this, &ZenPlayer::on_timeSlider_sliderMoved);
 
     //Connect queueListWidget signal
@@ -205,8 +211,8 @@ void ZenPlayer::on_muteButton_clicked()
         mute=true;
 
         ui->volumeSlider->setEnabled(false);
-        if (audioOutput)
-            audioOutput->setMuted(true);
+        if (vlcEngine)
+            vlcEngine->setMuted(true);
     }
     else
     {
@@ -216,16 +222,16 @@ void ZenPlayer::on_muteButton_clicked()
         mute=false;
 
         ui->volumeSlider->setEnabled(true);
-        if (audioOutput)
-            audioOutput->setMuted(false);
+        if (vlcEngine)
+            vlcEngine->setMuted(false);
     }
 }
 void ZenPlayer::on_volumeSlider_valueChanged(int value)
 {
     volume=value;
 	ui->volumeLabel->setText(QString::number(value));
-    if (audioOutput)
-        audioOutput->setVolume(value/100.0);
+    if (vlcEngine)
+        vlcEngine->setVolume(value);
 }
 
 // Controls
@@ -336,8 +342,8 @@ void ZenPlayer::on_playButton_clicked()
             ui->playButton->setIcon(icon);
             ui->playButton->setToolTip("Play");
             pause=true;
-            if (player)
-                player->pause();
+            if (vlcEngine)
+                vlcEngine->pause();
         }
         else
         {
@@ -345,7 +351,10 @@ void ZenPlayer::on_playButton_clicked()
             ui->playButton->setIcon(icon);
             ui->playButton->setToolTip("Pause");
             pause=false;
-            playTrack();
+            if (vlcEngine && vlcEngine->state()==VlcEngine::Paused)
+                vlcEngine->resume();
+            else
+                playTrack();
             updateQueueWidget();
         }
     }
@@ -406,7 +415,7 @@ void ZenPlayer::on_equalizerButton_clicked()
         equalizerCurrentValues.push_back(d.ui->hz12kSlider->value());
         equalizerCurrentValues.push_back(d.ui->hz14kSlider->value());
         equalizerCurrentValues.push_back(d.ui->hz16kSlider->value());
-        // Handle equalizer settings
+        applyEqualizerToVlc();
     }
 }
 
@@ -536,13 +545,14 @@ void ZenPlayer::loadData()
                 {
                     currentTrackPath=playQueue.at(currentQueueIndex);
                     updateQueueWidget();
-                    if (player)
+                    if (metaPlayer)
                     {
-                        player->setSource(QUrl::fromLocalFile(currentTrackPath));
+                        metaPlayer->setSource(QUrl::fromLocalFile(currentTrackPath));
                         handleMetadataChanged();
                     }
                 }
             }
+            applyEqualizerToVlc();
 
             if (data.contains("sortIndex"))
             {
@@ -836,35 +846,30 @@ void ZenPlayer::on_tabWidget_currentChanged(int index)
 //playing functions
 void ZenPlayer::playTrack()
 {
-    if (!player) 
+    if (!vlcEngine) 
         return;
 
     if (!currentTrackPath.isEmpty())
     {
-        QUrl trackUrl=QUrl::fromLocalFile(currentTrackPath);
-        player->setSource(trackUrl);
-        player->play();
+        if (metaPlayer)
+            metaPlayer->setSource(QUrl::fromLocalFile(currentTrackPath));
+        vlcEngine->play(currentTrackPath);
+        applyEqualizerToVlc();
     }
 }
 void ZenPlayer::handleMetadataChanged()
 {
-    if (player->mediaStatus()==QMediaPlayer::EndOfMedia)
-    {
-        if (repeat)
-            playTrack();
-        else
-            on_nextButton_clicked();
+    if (!metaPlayer)
         return;
-    }
 
-    QMediaMetaData metadata=player->metaData();
+    QMediaMetaData metadata=metaPlayer->metaData();
     QString title=metadata.value(QMediaMetaData::Title).toString();
     QString artist=metadata.value(QMediaMetaData::Author).toString();
     if (artist.isEmpty())
         artist=metadata.value(QMediaMetaData::ContributingArtist).toString();
 
     if (title.isEmpty())
-        title=QFileInfo(player->source().toLocalFile()).completeBaseName();
+        title=QFileInfo(metaPlayer->source().toLocalFile()).completeBaseName();
     
     QString displayText=title;
     if (!artist.isEmpty())
@@ -897,6 +902,39 @@ void ZenPlayer::handleMetadataChanged()
     
     setDefaultTrackPic();
 }
+
+void ZenPlayer::onVlcStateChanged(VlcEngine::State newState)
+{
+    if (newState==VlcEngine::Ended)
+    {
+        if (repeat)
+            playTrack();
+        else
+            on_nextButton_clicked();
+    }
+}
+
+void ZenPlayer::applyEqualizerToVlc()
+{
+    if (!vlcEngine)
+        return;
+
+    if (equalizerPresetIndex==0) // Flat
+    {
+        vlcEngine->resetEqualizer();
+        return;
+    }
+
+    if (equalizerCurrentValues.size() >= 11)
+    {
+        float preampDb=equalizerCurrentValues[0]/10.0f;
+        float bandDbs[10];
+        for (int i=0; i<10; i++)
+            bandDbs[i]=equalizerCurrentValues[i+1]/10.0f;
+        vlcEngine->applyEqualizer(preampDb, bandDbs, 10);
+    }
+}
+
 void ZenPlayer::setDefaultTrackPic()
 {
     ui->trackPicLabel->setStyleSheet(
@@ -954,7 +992,8 @@ void ZenPlayer::on_durationChanged(qint64 duration)
 }
 void ZenPlayer::on_timeSlider_sliderMoved(int position)
 {
-    player->setPosition(position);
+    if (vlcEngine)
+        vlcEngine->setPosition(position);
     ui->currentTimeLabel->setText(formatTime(position));
 }
 void ZenPlayer::on_sortComboBox_currentIndexChanged()

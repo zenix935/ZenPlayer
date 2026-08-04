@@ -10,7 +10,6 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QMediaPlayer>
-#include <QAudioOutput>
 #include <QPainterPath>
 #include <QMessageBox>
 #include <QMediaMetaData>
@@ -20,6 +19,7 @@
 #include <fstream>
 #include <algorithm>
 #include "json.hpp"
+#include "VlcEngine.h"
 #include "ui_ZenPlayer.h"
 #include "equalizerDialog.h"
 #include "ListItemDelegate.h"
@@ -81,11 +81,12 @@ private slots:
    void sortTracks();
    
    void on_queueListWidget_itemClicked(QListWidgetItem* item);
+   void onVlcStateChanged(VlcEngine::State newState);
 
 private:  
    Ui::ZenPlayerClass* ui;
-   QMediaPlayer* player;
-   QAudioOutput* audioOutput;
+   VlcEngine* vlcEngine;
+   QMediaPlayer* metaPlayer;
    bool mute,repeat,shuffle,pause,isFolder;
    int volume;
    json data;
@@ -99,6 +100,7 @@ private:
    std::vector<int> equalizerCustomValues; 
    std::vector<int> equalizerCurrentValues;
 
+   void applyEqualizerToVlc();
    void setDefaultTrackPic();
    QPixmap getRoundedPixmap(const QPixmap& src, int radius);
    QString formatTime(qint64 ms);
