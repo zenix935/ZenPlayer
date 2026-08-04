@@ -31,7 +31,6 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.6.2'
-          host: 'desktop'
           target: 'desktop'
 
       # ==========================================
