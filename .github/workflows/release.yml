@@ -1,0 +1,117 @@
+name: Cross-Platform Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows
+            artifact_name: MusicPlayer-Windows.zip
+          - os: macos-14 # Apple Silicon (M1/M2/M3)
+            platform: macos
+            artifact_name: MusicPlayer-macOS.dmg
+          - os: ubuntu-22.04
+            platform: linux
+            artifact_name: MusicPlayer-Linux.AppImage
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt@v3
+        with:
+          version: '6.6.2'
+          host: 'desktop'
+          target: 'desktop'
+
+      # ==========================================
+      # 1. WINDOWS BUILD & DEPLOY
+      # ==========================================
+      - name: Install Dependencies (Windows)
+        if: matrix.platform == 'windows'
+        run: |
+          choco install vlc cmake ninja -y
+
+      - name: Build & Package (Windows)
+        if: matrix.platform == 'windows'
+        shell: cmd
+        run: |
+          mkdir build && cd build
+          cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ..
+          cmake --build . --config Release
+          
+          :: Deploy Qt dependencies
+          windeployqt release/MusicPlayer.exe --no-compiler-runtime
+          
+          :: Copy libVLC binaries to release folder
+          xcopy /E /I "C:\Program Files\VideoLAN\VLC\plugins" "release\plugins"
+          copy "C:\Program Files\VideoLAN\VLC\libvlc.dll" "release\"
+          copy "C:\Program Files\VideoLAN\VLC\libvlccore.dll" "release\"
+          
+          :: Zip the folder
+          powershell Compress-Archive -Path release\* -DestinationPath ../${{ matrix.artifact_name }}
+
+      # ==========================================
+      # 2. MACOS BUILD & DEPLOY
+      # ==========================================
+      - name: Install Dependencies (macOS)
+        if: matrix.platform == 'macOS'
+        run: |
+          brew install cmake ninja vlc
+
+      - name: Build & Package (macOS)
+        if: matrix.platform == 'macOS'
+        run: |
+          mkdir build && cd build
+          cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ..
+          cmake --build .
+          
+          # Deploy Qt libraries into .app bundle
+          macdeployqt MusicPlayer.app -dmg
+          mv MusicPlayer.dmg ../${{ matrix.artifact_name }}
+
+      # ==========================================
+      # 3. LINUX BUILD & DEPLOY (AppImage)
+      # ==========================================
+      - name: Install Dependencies (Linux)
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build libvlc-dev libvlccore-dev vlc
+          
+          # Download linuxdeploy tools for AppImage generation
+          wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy*.AppImage
+
+      - name: Build & Package (Linux AppImage)
+        if: matrix.platform == 'linux'
+        run: |
+          mkdir build && cd build
+          cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
+          cmake --build .
+          DESTDIR=AppDir cmake --install .
+          
+          # Bundle Qt and libVLC into standalone AppImage
+          ../linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
+          mv MusicPlayer-x86_64.AppImage ../${{ matrix.artifact_name }}
+
+      # ==========================================
+      # 4. UPLOAD TO GITHUB RELEASES
+      # ==========================================
+      - name: Upload Release Artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.artifact_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
