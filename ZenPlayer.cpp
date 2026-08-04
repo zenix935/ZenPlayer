@@ -358,10 +358,26 @@ void ZenPlayer::on_previousButton_clicked()
 {
     if (playQueue.isEmpty()) 
         return;
-    int prevIndex=currentQueueIndex-1;
-    if (prevIndex<0)
-        prevIndex=playQueue.size()-1;
-    playTrackAtIndex(prevIndex);
+
+    qint64 currentPos=ui->timeSlider->value();
+    bool hasNotPlayedOverTwoSecs=(currentPos <= 2000);
+
+    if (hasNotPlayedOverTwoSecs)
+    {
+        int prevIndex=currentQueueIndex-1;
+        if (prevIndex<0)
+            prevIndex=playQueue.size()-1;
+        playTrackAtIndex(prevIndex);
+    }
+    else
+    {
+        if (vlcEngine)
+            vlcEngine->setPosition(0);
+        ui->timeSlider->setValue(0);
+        ui->currentTimeLabel->setText(formatTime(0));
+        if (showRemainingTime)
+            updateMaxTimeLabel();
+    }
 }
 void ZenPlayer::on_nextButton_clicked()
 {
@@ -1261,7 +1277,7 @@ void ZenPlayer::updateMaxTimeLabel()
     if (showRemainingTime)
     {
         qint64 position=ui->timeSlider->value();
-        qint64 remaining=qMax<qint64>(0, duration - position);
+        qint64 remaining=qMax<qint64>(0, duration-position);
         ui->maxTimeLabel->setText("-" + formatTime(remaining));
     }
     else
