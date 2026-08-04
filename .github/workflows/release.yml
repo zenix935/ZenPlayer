@@ -93,7 +93,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential cmake ninja-build libvlc-dev libvlccore-dev vlc \
-            libopengl0 libgl1 libglx0 libegl1 libgldispatch0 libgl1-mesa-dev libegl1-mesa-dev
+            libopengl0 libgl1 libglx0 libegl1 libglvnd0 libglvnd-dev libgl1-mesa-dev libegl1-mesa-dev
           
           # Download linuxdeploy tools for AppImage generation
           wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
