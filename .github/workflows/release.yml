@@ -30,39 +30,39 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.8.2'
+          version: '6.11.1'
           target: 'desktop'
           modules: 'qtmultimedia'
 
       # ==========================================
       # 1. WINDOWS BUILD & DEPLOY
       # ==========================================
-      - name: Install Dependencies (Windows)
-        if: matrix.platform == 'windows'
-        run: |
-          choco install vlc cmake ninja -y
+      # - name: Install Dependencies (Windows)
+      #   if: matrix.platform == 'windows'
+      #   run: |
+      #     choco install vlc cmake ninja -y
 
-      - name: Build & Package (Windows)
-        if: matrix.platform == 'windows'
-        shell: cmd
-        run: |
-          # 1. Configure and Build
-          cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --config Release
+      # - name: Build & Package (Windows)
+      #   if: matrix.platform == 'windows'
+      #   shell: cmd
+      #   run: |
+      #     # 1. Configure and Build
+      #     cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+      #     cmake --build build --config Release
           
-          # 2. Install executable into a staging directory
-          cmake --install build --prefix release_stage
+      #     # 2. Install executable into a staging directory
+      #     cmake --install build --prefix release_stage
           
-          # 3. Run windeployqt on the installed executable
-          windeployqt release_stage/bin/ZenPlayer.exe --no-compiler-runtime
+      #     # 3. Run windeployqt on the installed executable
+      #     windeployqt release_stage/bin/ZenPlayer.exe --no-compiler-runtime
           
-          # 4. Copy libVLC binaries next to the executable
-          xcopy /E /I "C:\Program Files\VideoLAN\VLC\plugins" "release_stage\bin\plugins"
-          copy "C:\Program Files\VideoLAN\VLC\libvlc.dll" "release_stage\bin\"
-          copy "C:\Program Files\VideoLAN\VLC\libvlccore.dll" "release_stage\bin\"
+      #     # 4. Copy libVLC binaries next to the executable
+      #     xcopy /E /I "C:\Program Files\VideoLAN\VLC\plugins" "release_stage\bin\plugins"
+      #     copy "C:\Program Files\VideoLAN\VLC\libvlc.dll" "release_stage\bin\"
+      #     copy "C:\Program Files\VideoLAN\VLC\libvlccore.dll" "release_stage\bin\"
           
-          # 5. Compress everything inside release_stage/bin/
-          powershell Compress-Archive -Path release_stage\bin\* -DestinationPath ${{ matrix.artifact_name }}
+      #     # 5. Compress everything inside release_stage/bin/
+      #     powershell Compress-Archive -Path release_stage\bin\* -DestinationPath ${{ matrix.artifact_name }}
 
       # ==========================================
       # 2. MACOS BUILD & DEPLOY
@@ -88,35 +88,35 @@ jobs:
       # ==========================================
       # 3. LINUX BUILD & DEPLOY (AppImage)
       # ==========================================
-      - name: Install Dependencies (Linux)
-        if: matrix.platform == 'linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake ninja-build libvlc-dev libvlccore-dev vlc
+      # - name: Install Dependencies (Linux)
+      #   if: matrix.platform == 'linux'
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y build-essential cmake ninja-build libvlc-dev libvlccore-dev vlc
           
-          # Download linuxdeploy tools for AppImage generation
-          wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-          wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-          chmod +x linuxdeploy*.AppImage
+      #     # Download linuxdeploy tools for AppImage generation
+      #     wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+      #     wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+      #     chmod +x linuxdeploy*.AppImage
 
-      - name: Build & Package (Linux AppImage)
-        if: matrix.platform == 'linux'
-        run: |
-          # Configure, build, and install into AppDir
-          cmake -B build -S . -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
-          cmake --build build
-          DESTDIR=build/AppDir cmake --install build
+      # - name: Build & Package (Linux AppImage)
+      #   if: matrix.platform == 'linux'
+      #   run: |
+      #     # Configure, build, and install into AppDir
+      #     cmake -B build -S . -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+      #     cmake --build build
+      #     DESTDIR=build/AppDir cmake --install build
           
-          # Generate AppImage
-          ./linuxdeploy-x86_64.AppImage --appdir build/AppDir --plugin qt --output appimage
-          mv ZenPlayer-*.AppImage ${{ matrix.artifact_name }}
+      #     # Generate AppImage
+      #     ./linuxdeploy-x86_64.AppImage --appdir build/AppDir --plugin qt --output appimage
+      #     mv ZenPlayer-*.AppImage ${{ matrix.artifact_name }}
 
-      # ==========================================
-      # 4. UPLOAD TO GITHUB RELEASES
-      # ==========================================
-      - name: Upload Release Artifacts
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ${{ matrix.artifact_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # # ==========================================
+      # # 4. UPLOAD TO GITHUB RELEASES
+      # # ==========================================
+      # - name: Upload Release Artifacts
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     files: ${{ matrix.artifact_name }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
