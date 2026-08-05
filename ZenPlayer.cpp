@@ -474,7 +474,7 @@ void ZenPlayer::on_equalizerButton_clicked()
     if(d.exec()==QDialog::Accepted)
     {
         equalizerPresetIndex=d.ui->presetComboBox->currentIndex();
-        if(equalizerPresetIndex==18)
+        if(equalizerPresetIndex==10)
         {
             equalizerCustomValues.clear();
             equalizerCustomValues.push_back(d.ui->preampSlider->value());
@@ -492,24 +492,16 @@ void ZenPlayer::on_equalizerButton_clicked()
         switch (equalizerPresetIndex)
         {
         case 0: ui->equalizerlabel->setText("Flat"); break;
-        case 1: ui->equalizerlabel->setText("Classical"); break;
-        case 2: ui->equalizerlabel->setText("Club"); break;
-        case 3: ui->equalizerlabel->setText("Dance"); break;
-        case 4: ui->equalizerlabel->setText("Full Bass"); break;
-        case 5: ui->equalizerlabel->setText("Full Bass & Treble"); break;
-        case 6: ui->equalizerlabel->setText("Full Treble"); break;
-        case 7: ui->equalizerlabel->setText("Headphones"); break;
-        case 8: ui->equalizerlabel->setText("Large Hall"); break;
-        case 9: ui->equalizerlabel->setText("Live"); break;
-        case 10: ui->equalizerlabel->setText("Party"); break;
-        case 11: ui->equalizerlabel->setText("Pop"); break;
-        case 12: ui->equalizerlabel->setText("Reggae"); break;
-        case 13: ui->equalizerlabel->setText("Rock"); break;
-        case 14: ui->equalizerlabel->setText("Ska"); break;
-        case 15: ui->equalizerlabel->setText("Soft"); break;
-        case 16: ui->equalizerlabel->setText("Soft Rock"); break;
-        case 17: ui->equalizerlabel->setText("Techno"); break;
-        case 18: ui->equalizerlabel->setText("Custom"); break;
+        case 1: ui->equalizerlabel->setText("Headphones"); break;
+        case 2: ui->equalizerlabel->setText("Laptop"); break;
+        case 3: ui->equalizerlabel->setText("Speakers"); break;
+        case 4: ui->equalizerlabel->setText("Bass Boost"); break;
+        case 5: ui->equalizerlabel->setText("Treble Boost"); break;
+        case 6: ui->equalizerlabel->setText("Bass & Treble Boost"); break;
+        case 7: ui->equalizerlabel->setText("Pop"); break;
+        case 8: ui->equalizerlabel->setText("Rock"); break;
+        case 9: ui->equalizerlabel->setText("Classical"); break;
+        case 10: ui->equalizerlabel->setText("Custom"); break;
         }
         equalizerCurrentValues.clear();
         equalizerCurrentValues.push_back(d.ui->preampSlider->value());
@@ -606,24 +598,16 @@ void ZenPlayer::loadData()
                 switch (equalizerPresetIndex)
                 {
                 case 0: ui->equalizerlabel->setText("Flat"); break;
-                case 1: ui->equalizerlabel->setText("Classical"); break;
-                case 2: ui->equalizerlabel->setText("Club"); break;
-                case 3: ui->equalizerlabel->setText("Dance"); break;
-                case 4: ui->equalizerlabel->setText("Full Bass"); break;
-                case 5: ui->equalizerlabel->setText("Full Bass & Treble"); break;
-                case 6: ui->equalizerlabel->setText("Full Treble"); break;
-                case 7: ui->equalizerlabel->setText("Headphones"); break;
-                case 8: ui->equalizerlabel->setText("Large Hall"); break;
-                case 9: ui->equalizerlabel->setText("Live"); break;
-                case 10: ui->equalizerlabel->setText("Party"); break;
-                case 11: ui->equalizerlabel->setText("Pop"); break;
-                case 12: ui->equalizerlabel->setText("Reggae"); break;
-                case 13: ui->equalizerlabel->setText("Rock"); break;
-                case 14: ui->equalizerlabel->setText("Ska"); break;
-                case 15: ui->equalizerlabel->setText("Soft"); break;
-                case 16: ui->equalizerlabel->setText("Soft Rock"); break;
-                case 17: ui->equalizerlabel->setText("Techno"); break;
-                case 18: ui->equalizerlabel->setText("Custom"); break;
+                case 1: ui->equalizerlabel->setText("Headphones"); break;
+                case 2: ui->equalizerlabel->setText("Laptop"); break;
+                case 3: ui->equalizerlabel->setText("Speakers"); break;
+                case 4: ui->equalizerlabel->setText("Bass Boost"); break;
+                case 5: ui->equalizerlabel->setText("Treble Boost"); break;
+                case 6: ui->equalizerlabel->setText("Bass & Treble Boost"); break;
+                case 7: ui->equalizerlabel->setText("Pop"); break;
+                case 8: ui->equalizerlabel->setText("Rock"); break;
+                case 9: ui->equalizerlabel->setText("Classical"); break;
+                case 10: ui->equalizerlabel->setText("Custom"); break;
                 }
             }
             if(data.contains("equalizerCustomValues") && data["equalizerCustomValues"].is_array())

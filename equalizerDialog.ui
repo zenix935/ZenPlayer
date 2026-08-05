@@ -47,52 +47,32 @@
        </item>
        <item>
         <property name="text">
-         <string>Classical</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Club</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Dance</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Full Bass</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Full Bass &amp; Treble</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Full Treble</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>Headphones</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Large Hall</string>
+         <string>Laptop</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Live</string>
+         <string>Speakers</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Party</string>
+         <string>Bass Boost</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Treble Boost</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Bass &amp; Treble Boost</string>
         </property>
        </item>
        <item>
@@ -102,32 +82,12 @@
        </item>
        <item>
         <property name="text">
-         <string>Reggae</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>Rock</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Ska</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Soft</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Soft Rock</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Techno</string>
+         <string>Classical</string>
         </property>
        </item>
        <item>

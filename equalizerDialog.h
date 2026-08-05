@@ -16,7 +16,7 @@ public:
 	{
 		if(values.size()==11)
 			customValues=values;
-		if(ui->presetComboBox->currentIndex()==18)
+		if(ui->presetComboBox->currentIndex()==10)
 			setSlidersValue(customValues[0], customValues[1], customValues[2], customValues[3], customValues[4], customValues[5], customValues[6], 
 							customValues[7], customValues[8], customValues[9], customValues[10]);
 	}
@@ -71,75 +71,43 @@ private slots:
 			setSlidersActive(false);
 			setSlidersValue(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 			break;
-		case 1: // Classical
+		case 1: // Headphones
 			setSlidersActive(false);
-			setSlidersValue(120, 0, 0, 0, 0, 0, 0, -72, -72, -72, -96);
+			setSlidersValue(90, 45, 30, 10, -10, -10, 10, 35, 40, 40, 35);
 			break;
-		case 2: // Club
+		case 2: // Laptop
 			setSlidersActive(false);
-			setSlidersValue(60, 0, 0, 80, 56, 56, 56, 32, 0, 0, 0);
+			setSlidersValue(100, -60, -20, 10, 30, 40, 35, 25, 10, 0, -10);
 			break;
-		case 3: //Dance
+		case 3: // Speakers
 			setSlidersActive(false);
-			setSlidersValue(50, 96, 72, 24, 0, 0, -56, -72, -72, 0, 0);
+			setSlidersValue(100, -30, -10, 15, 25, 30, 20, 20, 10, 5, 0);
 			break;
-		case 4: // Full Bass
+		case 4: // Bass Boost
 			setSlidersActive(false);
-			setSlidersValue(50, -80, 96, 96, 56, 16, -40, -80, -103, 112, 112);
+			setSlidersValue(70, 70, 50, 30, 0, 0, 0, 0, 0, 0, 0);
 			break;
-		case 5: // Full Bass & Treble
+		case 5: // Treble Boost
 			setSlidersActive(false);
-			setSlidersValue(40, 72, 56, 0, -72, -48, 16, 80, 112, 120, 120);
+			setSlidersValue(80, 0, 0, 0, 0, 10, 30, 50, 60, 65, 70);
 			break;
-		case 6: // Full Treble
+		case 6: // Bass & Treble Boost
 			setSlidersActive(false);
-			setSlidersValue(30, -96, -96, -96, -40, 24, 112, 160, 160, 160, 167);
+			setSlidersValue(70, 60, 45, 15, -10, -20, 10, 40, 55, 60, 60);
 			break;
-		case 7: // Headphones
+		case 7: // pop
 			setSlidersActive(false);
-			setSlidersValue(40, 48, 112, 56, -32, -24, 16, 48, 96, 128, 144);
+			setSlidersValue(90, 15, 35, 45, 30, 0, -15, -20, -15, 0, 10);
 			break;
-		case 8: // Large Hall
+		case 8: // Rock
 			setSlidersActive(false);
-			setSlidersValue(50, 103, 103, 56, 56, 0, -48, -48, -48, 0, 0);
+			setSlidersValue(80, 50, 35, -15, -25, 5, 30, 45, 40, 30, 20);
 			break;
-		case 9: // Live
+		case 9: // Classical
 			setSlidersActive(false);
-			setSlidersValue(70, -48, 0, 40, 56, 56, 56, 40, 24, 24, 24);
+			setSlidersValue(120, 0, 0, 0, 0, 0, -10, -20, -25, -30, -35);
 			break;
-		case 10: //party
-			setSlidersActive(false);
-			setSlidersValue(60, 72, 72, 0, 0, 0, 0, 0, 0, 72, 72);
-			break;
-		case 11: //pop
-			setSlidersActive(false);
-			setSlidersValue(50, -24, 0, 24, 48, 48, 48, 24, 0, -24, -24);
-			break;
-		case 12: //Reggae
-			setSlidersActive(false);
-			setSlidersValue(80, 0, 0, 0, -56, 0, 64, 64, 0, 0, 0);
-			break;
-		case 13: //Rock
-			setSlidersActive(false);
-			setSlidersValue(50, 80, 48, -56, -80, -32, 40, 88, 112, 112, 112);
-			break;
-		case 14: //Ska
-			setSlidersActive(false);
-			setSlidersValue(60, -24, -48, -40, 0, 40, 56, 88, 96, 112, 96);
-			break;
-		case 15: //Soft
-			setSlidersActive(false);
-			setSlidersValue(50, -48, 16, 0, -24, 0, 40, 80, 96, 112, 120);
-			break;
-		case 16: //Soft Rock
-			setSlidersActive(false);
-			setSlidersValue(70, 40, 40, 24, 0, -40, -56, -32, 0, 24, 88);
-			break;
-		case 17: //Techno
-			setSlidersActive(false);
-			setSlidersValue(50, 80, 56, 0, -56, -48, 0, 80, 96, 96, 88);
-			break;
-		case 18: // Custom
+		case 10: // Custom
 			setSlidersActive(true);
 			setSlidersValue(customValues[0], customValues[1], customValues[2], customValues[3], customValues[4], customValues[5], customValues[6], 
 							customValues[7], customValues[8], customValues[9], customValues[10]);
